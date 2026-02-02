@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Account - SuperSweets</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d9a8c 0%, #1f7a6b 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .verify-button {
+            display: inline-block;
+            background-color: #2d9a8c;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 20px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .verify-button:hover {
+            background-color: #1f7a6b;
+        }
+
+        .alternative-link {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .alternative-link p {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .link-text {
+            word-break: break-all;
+            font-family: monospace;
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            font-size: 12px;
+            color: #374151;
+        }
+
+        .security-note {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f0fdfa;
+            border-left: 4px solid #2d9a8c;
+            border-radius: 4px;
+            text-align: left;
+        }
+
+        .security-note h4 {
+            margin: 0 0 10px 0;
+            color: #1f7a6b;
+            font-size: 16px;
+        }
+
+        .security-note ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #1f7a6b;
+        }
+
+        .security-note li {
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            background-color: #1f2937;
+            color: #d1d5db;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .footer-content {
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #2d9a8c;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .logo {
+                font-size: 28px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .verify-button {
+                display: block;
+                margin: 20px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <img src="{{ .SiteURL }}/logo.png" alt="Dare To Diet Logo" style="height: 40px; margin-bottom: 10px;" />
+            <div class="logo">SuperSweets</div>
+            <div class="header-subtitle">Welcome to Bulk Shopping</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="welcome-icon">🎉</div>
+            <h1 class="title">Welcome to SuperSweets!</h1>
+            <p class="message">
+                Thank you for joining SuperSweets, your trusted partner for fitness supplements and health products.
+                To get started and secure your account, please verify your email address by clicking the button below.
+            </p>
+
+            <a href="{{ .ConfirmationURL }}" class="verify-button">
+                ✅ Verify My Email Address
+            </a>
+
+            <div class="alternative-link">
+                <p><strong>Can't click the button?</strong> Copy and paste this link into your browser:</p>
+                <div class="link-text">{{ .ConfirmationURL }}</div>
+            </div>
+
+            <div class="security-note">
+                <h4>🔒 Security Information</h4>
+                <ul>
+                    <li>This verification link will expire in 24 hours</li>
+                    <li>If you didn't create an account with SuperSweets, please ignore this email</li>
+                    <li>Never share this verification link with anyone</li>
+                    <li>For security questions, contact our support team</li>
+                </ul>
+            </div>
+
+            <p style="margin-top: 40px; color: #6b7280;">
+                Once verified, you'll be able to:
+            </p>
+            <div style="text-align: left; display: inline-block; margin-top: 20px;">
+                <div style="margin: 10px 0; color: #374151;">✅ Browse thousands of bulk products</div>
+                <div style="margin: 10px 0; color: #374151;">✅ Get wholesale prices and bulk discounts</div>
+                <div style="margin: 10px 0; color: #374151;">✅ Track your orders and delivery status</div>
+                <div style="margin: 10px 0; color: #374151;">✅ Save multiple delivery addresses</div>
+                <div style="margin: 10px 0; color: #374151;">✅ Access exclusive member offers</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">SuperSweets</div>
+                <div style="margin-bottom: 15px;">Your trusted partner for bulk groceries and wholesale products</div>
+
+                <div class="footer-links">
+                    <a href="{{ .SiteURL }}">Visit Website</a>
+                    <a href="{{ .SiteURL }}/products">Browse Products</a>
+                    <a href="{{ .SiteURL }}/contact">Contact Support</a>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                <p>Shop number 5, Patel Nagar, Hansi road, Patiala chowk, JIND (Haryana) 126102</p>
+                <p style="margin-top: 10px;">
+                    This email was sent to {{ .Email }}. If you have any questions, please contact our support team at
+                    support@daretodiet.fit.
+                </p>
+                <p style="margin-top: 10px;">
+                    © 2025 SuperSweets. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

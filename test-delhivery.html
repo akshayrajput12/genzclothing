@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhivery API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Delhivery API Test</h1>
+        <p>Test the Delhivery delivery pricing API with your specific parameters.</p>
+
+        <div class="test-section">
+            <h3>Test Parameters</h3>
+            <div>
+                <label>Origin Pincode (Admin):</label>
+                <input type="text" id="originPincode" value="201016" placeholder="201016">
+            </div>
+            <div>
+                <label>Delivery Pincode:</label>
+                <input type="text" id="deliveryPincode" value="226010" placeholder="226010">
+            </div>
+            <div>
+                <label>Weight (kg):</label>
+                <input type="number" id="weight" value="2.5" step="0.1" min="0.1">
+            </div>
+            <div>
+                <label>Order Value (₹):</label>
+                <input type="number" id="orderValue" value="1500" min="0">
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Direct API Test</h3>
+            <p>Test the API directly using the exact curl parameters:</p>
+            <button onclick="testDirectAPI()">Test Direct API</button>
+            <div id="directResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Supabase Proxy Test</h3>
+            <p>Test through the Supabase Edge Function proxy:</p>
+            <button onclick="testSupabaseProxy()">Test Supabase Proxy</button>
+            <div id="proxyResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Expected API Response</h3>
+            <p>Based on your curl command, the API should return delivery charges for:</p>
+            <ul>
+                <li><strong>Origin:</strong> 201016 (Admin address)</li>
+                <li><strong>Destination:</strong> 226010 (User address)</li>
+                <li><strong>Weight:</strong> 2.5kg (2500g)</li>
+                <li><strong>Service Type:</strong> Surface delivery (S)</li>
+                <li><strong>Package Type:</strong> RTO</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testDirectAPI() {
+            const resultDiv = document.getElementById('directResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Testing direct API...';
+
+            try {
+                const originPincode = document.getElementById('originPincode').value;
+                const deliveryPincode = document.getElementById('deliveryPincode').value;
+                const weight = document.getElementById('weight').value;
+                const orderValue = document.getElementById('orderValue').value;
+
+                const url = `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=S&ss=RTO&d_pin=${deliveryPincode}&o_pin=${originPincode}&cgm=${weight * 1000}`;
+                
+                console.log('Testing URL:', url);
+
+                // Note: This will fail due to CORS, but shows the exact request
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Token db825db6ab6c44b3e809520915801f5dbc205d92',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Success!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}\n\nThis is expected due to CORS restrictions. Use the Supabase proxy instead.`;
+            }
+        }
+
+        async function testSupabaseProxy() {
+            const resultDiv = document.getElementById('proxyResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Testing Supabase proxy...';
+
+            try {
+                const originPincode = document.getElementById('originPincode').value;
+                const deliveryPincode = document.getElementById('deliveryPincode').value;
+                const weight = document.getElementById('weight').value;
+
+                // You'll need to replace this with your actual Supabase URL and anon key
+                const supabaseUrl = 'https://dhmehtfdxqwumtwktmlp.supabase.co';
+                const anonKey = 'your-supabase-anon-key'; // Replace with actual key
+                
+                const proxyUrl = `${supabaseUrl}/functions/v1/delhivery-proxy`;
+                
+                const queryParams = new URLSearchParams({
+                    md: 'S',
+                    ss: 'RTO',
+                    d_pin: deliveryPincode,
+                    o_pin: originPincode,
+                    cgm: (weight * 1000).toString()
+                });
+
+                const params = new URLSearchParams({
+                    path: `/api/kinko/v1/invoice/charges/.json?${queryParams.toString()}`,
+                    method: 'GET'
+                });
+
+                const fullUrl = `${proxyUrl}?${params.toString()}`;
+                
+                console.log('Testing proxy URL:', fullUrl);
+
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${anonKey}`
+                    }
+                });
+
+                const responseText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = responseText;
+                }
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `Success!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `Error!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Auto-populate with your curl parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Delhivery API Test Page Loaded');
+            console.log('Your curl command parameters:');
+            console.log('- Origin: 201016');
+            console.log('- Destination: 226010');
+            console.log('- Weight: 2.5kg');
+            console.log('- API Key: db825db6ab6c44b3e809520915801f5dbc205d92');
+        });
+    </script>
+</body>
+</html>
