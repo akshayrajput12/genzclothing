@@ -6,18 +6,100 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-
-/* M-body-font-400 font */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-
-/* Lobster Two font for Paridhan Haat logo */
 @import url('https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-/* Hero Section Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;900&family=Noto+Sans:wght@400;500;700&display=swap');
 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Naruto/Konoha Palette */
+    --color-ninja-orange: #F97316;
+    --color-shadow-black: #0B0B0F;
+    --color-scroll-white: #F8FAFC;
+    --color-smoke-grey: #9CA3AF;
+    --color-chakra-red: #DC2626;
+    --color-leaf-green: #16A34A;
+    --color-storm-blue: #2563EB;
+
+    --color-primary: var(--color-ninja-orange);
+    --color-secondary: var(--color-smoke-grey);
+    --color-background-light: var(--color-scroll-white);
+    --color-background-dark: var(--color-shadow-black);
+    --color-bg: var(--color-background-light);
+    --color-dark: var(--color-shadow-black);
+    --color-light: var(--color-scroll-white);
+    --color-accent: var(--color-chakra-red);
+    --color-accent-dark: var(--color-storm-blue);
+    --color-soft: var(--color-scroll-white);
+    --color-soft-bg: #F1F5F9;
+    --radius: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2.5rem;
+    --shadow-soft: 0 4px 20px -2px rgba(11, 11, 15, 0.1);
+  }
+
+  .dark {
+    --color-bg: var(--color-background-dark);
+    --color-dark: var(--color-scroll-white);
+    --color-light: var(--color-shadow-black);
+    --color-soft: #1E293B;
+    --color-soft-bg: var(--color-shadow-black);
+    --color-secondary: var(--color-smoke-grey);
+    --color-accent: var(--color-ninja-orange);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Tenor Sans', sans-serif;
+  }
+
+  /* Custom Scrollbar for OBITO Theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background-dark);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-chakra-red);
+  }
+
+  /* Firefox Support */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-background-dark);
+  }
+
+  .M-body-font-400 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+
+  .lobster-font {
+    font-family: 'Lobster Two', cursive;
+    font-weight: 700;
+  }
+}
 
 @layer utilities {
   .glass {
@@ -34,29 +116,29 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .card-hover:hover img {
-    transform: scale(1.05);
-    filter: saturate(1.1);
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .dark .glass-panel {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .glass-overlay {
     background: rgba(255, 255, 255, 0.08);
+    /* Fallback */
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid rgba(255, 255, 255, 0.15);
   }
 
+  /* Text Effects */
   .text-overlap {
     text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
   }
 
   .vertical-text {
@@ -73,19 +155,6 @@
     -webkit-text-stroke: 1px white;
   }
 
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-
-  .dark .glass-panel {
-    background: rgba(30, 30, 30, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Glitch effect simulation for logo */
   .glitch-text {
     position: relative;
   }
@@ -117,32 +186,93 @@
     text-shadow: -1px 0 #00fff9;
     clip-path: inset(54% 0 20% 0);
   }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .card-hover:hover img {
+    transform: scale(1.05);
+    filter: saturate(1.1);
+  }
+
+  .hover-glow:hover {
+    animation: glow 1.5s infinite;
+  }
+
+  /* NEW OBITO STYLES */
+  .manga-grid {
+    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .dark .manga-grid {
+    background-image: radial-gradient(#334155 1px, transparent 1px);
+    /* Darker dots for dark mode */
+  }
+
+  .film-grain {
+    position: relative;
+  }
+
+  /* Updated film-grain with generic noise URL or ensure existing one works */
+  .film-grain::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    /* Reliable noise source */
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    border-radius: inherit;
+  }
+
+  .sharingan-bg {
+    mask-image: radial-gradient(circle, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle, black 40%, transparent 80%);
+  }
+
+  .orange-glow {
+    box-shadow: inset 0 0 40px rgba(249, 116, 21, 0.15);
+  }
+
+  .divider-glow {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #f97415, transparent);
+    opacity: 0.3;
+  }
+
+  .text-shadow-black {
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  .font-manga {
+    font-family: 'Noto Sans JP', sans-serif;
+  }
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Animations */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(233, 213, 255, 0.2);
+  }
 
-/* Custom utilities */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+  50% {
+    box-shadow: 0 0 20px rgba(233, 213, 255, 0.6);
+  }
 
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Marquee Animation */
-.animate-marquee {
-  display: inline-block;
-  animation: marquee 25s linear infinite;
-  /* Slower speed - changed from 15s to 25s */
+  100% {
+    box-shadow: 0 0 5px rgba(233, 213, 255, 0.2);
+  }
 }
 
 @keyframes marquee {
@@ -155,177 +285,13 @@
   }
 }
 
-/* Responsive header adjustments */
-@media (max-width: 640px) {
-  .mobile-header-spacing {
-    height: 6rem;
-    /* Adjust for larger header on mobile */
-  }
-}
-
-@layer base {
-  :root {
-    /* Naruto/Konoha Palette */
-    --color-ninja-orange: #F97316;
-    --color-shadow-black: #0B0B0F;
-    --color-scroll-white: #F8FAFC;
-    --color-smoke-grey: #9CA3AF;
-
-    /* Accents */
-    --color-chakra-red: #DC2626;
-    --color-leaf-green: #16A34A;
-    --color-storm-blue: #2563EB;
-
-    /* Semantic Mappings */
-    --color-primary: var(--color-ninja-orange);
-    --color-secondary: var(--color-smoke-grey);
-
-    --color-background-light: var(--color-scroll-white);
-    --color-background-dark: var(--color-shadow-black);
-
-    --color-bg: var(--color-background-light);
-    --color-dark: var(--color-shadow-black);
-    /* Text color in light mode */
-    --color-light: var(--color-scroll-white);
-
-    --color-accent: var(--color-chakra-red);
-    --color-accent-dark: var(--color-storm-blue);
-
-    --color-soft: var(--color-scroll-white);
-    --color-soft-bg: #F1F5F9;
-    /* SLATE-100 for soft light bg */
-
-    /* Radius */
-    --radius: 1rem;
-    --radius-xl: 1.5rem;
-    --radius-2xl: 2.5rem;
-
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -2px rgba(11, 11, 15, 0.1);
-    /* Shadow Black based */
-  }
-
-  .dark {
-    --color-bg: var(--color-background-dark);
-    --color-dark: var(--color-scroll-white);
-    /* Text color in dark mode */
-    --color-light: var(--color-shadow-black);
-
-    /* Re-map for dark mode if needed */
-    --color-soft: #1E293B;
-    /* Slate-800 */
-    --color-soft-bg: var(--color-shadow-black);
-    --color-secondary: var(--color-smoke-grey);
-    --color-accent: var(--color-ninja-orange);
-  }
-}
-
-@layer utilities {
-  .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .dark .glass {
-    background: rgba(20, 20, 20, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .hover-glow:hover {
-    animation: glow 1.5s infinite;
-  }
-
-  @keyframes glow {
-    0% {
-      box-shadow: 0 0 5px rgba(233, 213, 255, 0.2);
-    }
-
-    50% {
-      box-shadow: 0 0 20px rgba(233, 213, 255, 0.6);
-    }
-
-    100% {
-      box-shadow: 0 0 5px rgba(233, 213, 255, 0.2);
-    }
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Tenor Sans', sans-serif;
-  }
-
-  .M-body-font-400 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  }
-
-  .lobster-font {
-    font-family: 'Lobster Two', cursive;
-    font-weight: 700;
-  }
-
-  .logo-glow {
-    text-shadow: 0 0 10px rgba(74, 74, 153, 0.5), 0 0 20px rgba(74, 74, 153, 0.3);
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes glow {
-    from {
-      text-shadow: 0 0 5px rgba(74, 74, 153, 0.5), 0 0 10px rgba(74, 74, 153, 0.3);
-    }
-
-    to {
-      text-shadow: 0 0 15px rgba(74, 74, 153, 0.7), 0 0 25px rgba(74, 74, 153, 0.5);
-    }
-  }
-}
-
-/* New Product Card Utilities */
-.glass-effect {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dark .glass-effect {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.film-grain::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAUO51BK6nq413vuym3lWk2X5Xnv9V_Hzw44kVGlAmoU4JlgWNCnZacPxPn2QeZmLOM8giMJ7ov-zBxjDb4g5qos56ZBntDuHSGgL9QBsIrrIX0k1hIrZHC3ZbA7lLH2GRGK8eVDtRkkIrzvv2cgdmRxi4_sbw_xpG8ilpQ9phfk8FzuiLWvBEYwwcoLKaqFal-cFE8TSUq0xvWSYl42o9J59ceO1HRosm7Q5DCdGH4qlMQWnvVRSbsIfSNHU9xH5XF6WRYTxY53-8);
-  opacity: 0.15;
-  mix-blend-mode: overlay;
-}
-
-.sophisticated-small-caps {
-  font-variant: small-caps;
-  letter-spacing: 0.05em;
-}
-
-.vertical-text {
-  writing-mode: vertical-rl;
-  text-orientation: mixed
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 25s linear infinite;
 }
 
 .reveal-anim {
-  animation: reveal 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards
+  animation: reveal 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 @keyframes reveal {
@@ -340,17 +306,14 @@
   }
 }
 
-/* Magnetic Wrap */
 .magnetic-wrap {
   transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   display: inline-block;
 }
 
-/* Glass Button */
 .glass-btn {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -359,7 +322,6 @@
   transform: scale(1.02);
 }
 
-/* Nav Underline Animation */
 .nav-underline {
   position: relative;
 }
@@ -379,115 +341,21 @@
   width: 100%;
 }
 
-
 .dark .nav-underline::after {
   background-color: #FDFBF7;
 }
 
-/* Profile Page Styles matching reference */
-/* Profile Page Styles matching reference */
-.glass-sidebar {
-  background: rgba(230, 230, 230, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
+/* Custom utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.dark .glass-sidebar {
-  background: rgba(15, 5, 10, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.main-gradient {
-  background: radial-gradient(circle at top right, #f5e6ed, #eae4e6);
-}
-
-.dark .main-gradient {
-  background: radial-gradient(circle at top right, #2d121f, #1a0b12);
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.dark .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.bg-cream {
-  background-color: #fdfaf7;
-}
-
-.font-display {
-  font-family: 'Noto Serif', serif;
-}
-
-.font-sans-custom {
-  font-family: 'Noto Sans', sans-serif;
-}
-
-.text-background-dark {
-  color: #221018;
-}
-
-.bg-background-dark {
-  background-color: #221018;
-}
-
-/* Obito Theme Utilities (Testimonials) */
-.manga-lines {
-  background-image: repeating-linear-gradient(0deg,
-      transparent,
-      transparent 48px,
-      rgba(156, 163, 175, 0.05) 49px,
-      rgba(156, 163, 175, 0.05) 50px);
-}
-
-.shattered-clip-1 {
-  clip-path: polygon(0% 0%, 95% 2%, 100% 15%, 98% 85%, 85% 100%, 5% 98%, 0% 80%);
-}
-
-.shattered-clip-2 {
-  clip-path: polygon(5% 0%, 100% 5%, 95% 95%, 15% 100%, 0% 85%, 2% 15%);
-}
-
-.shattered-clip-3 {
-  clip-path: polygon(0% 15%, 15% 0%, 85% 5%, 100% 15%, 100% 85%, 85% 100%, 0% 90%);
-}
-
-.obito-glass-panel {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.ninja-hover:hover {
-  background-color: #0B0B0F;
-  color: white;
-  border-color: #0B0B0F;
-}
-
-.carousel-track {
-  display: flex;
-  width: max-content;
-}
-
-.animate-carousel {
-  animation: carousel-scroll 40s linear infinite;
-}
-
-@keyframes carousel-scroll {
-  0% {
-    transform: translateX(-50%);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
