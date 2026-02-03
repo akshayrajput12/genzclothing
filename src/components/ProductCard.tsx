@@ -151,13 +151,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <button
                   onClick={handleQuickView}
                   aria-label="Quick View"
-                  className="size-11 flex items-center justify-center bg-white/90 backdrop-blur text-black rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-300 hidden md:flex"
+                  className="size-11 flex items-center justify-center bg-white/90 backdrop-blur text-black rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-300 md:flex"
                 >
                   <span className="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
                 <button
                   onClick={handleAddToCart}
-                  className="h-11 px-6 flex items-center justify-center bg-primary text-white rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 transition-all duration-300 gap-2 font-bold text-sm tracking-wide w-full md:w-auto btn-summon relative overflow-hidden"
+                  className="h-11 px-3 md:px-6 flex items-center justify-center bg-primary text-white rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 transition-all duration-300 gap-2 font-bold text-xs md:text-sm tracking-wide flex-1 md:flex-none md:w-auto btn-summon relative overflow-hidden"
                 >
                   <div className="summon-particles"></div>
                   {/* Summoning Circle SVG */}
