@@ -34,66 +34,81 @@ const CheckoutPayment = ({
   };
 
   return (
-    <div className="bg-[#F9F9F7] border border-gray-200 p-8 shadow-sm">
-      <div className="flex items-center mb-8">
-        <h2 className="text-2xl font-serif text-[#1a1a1a]">Payment Method</h2>
+    <div className="bg-white/50 dark:bg-white/5 backdrop-blur-md border border-[#F97316]/20 rounded-xl p-8 shadow-sm font-display relative overflow-hidden">
+      {/* Decor */}
+      <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+        <CreditCard className="w-32 h-32 text-[#F97316]" />
       </div>
 
-      <div className="space-y-6">
+      <div className="flex items-center gap-3 mb-8 relative z-10">
+        <div className="w-1.5 h-8 bg-[#F97316] rounded-full"></div>
+        <h2 className="text-3xl font-bebas text-[#0B0B0F] dark:text-white italic tracking-wide">
+          TRANSACTION METHOD
+        </h2>
+      </div>
+
+      <div className="space-y-6 relative z-10">
         <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
-          {/* Pay Online Option */}
+          {/* Pay Online Option - Holo Card */}
           {settings.razorpay_enabled && (
             <div
-              className={`relative border transition-all duration-300 ${paymentMethod === 'online'
-                  ? 'border-[#1a1a1a] bg-white ring-1 ring-[#1a1a1a] ring-offset-2'
-                  : 'border-gray-200 bg-white hover:border-gray-400'
+              className={`relative border rounded-xl transition-all duration-300 overflow-hidden group/card ${paymentMethod === 'online'
+                ? 'border-[#F97316] bg-[#F97316]/5 shadow-[0_0_20px_rgba(249,115,22,0.1)]'
+                : 'border-gray-200 dark:border-white/10 bg-white/50 dark:bg-black/20 hover:border-[#F97316]/30'
                 }`}
             >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-200%] group-hover/card:translate-x-[200%] transition-transform duration-1000"></div>
+
               <div className="flex items-start p-6 cursor-pointer" onClick={() => setPaymentMethod('online')}>
-                <RadioGroupItem value="online" id="online" className="mt-1 border-gray-300 text-[#1a1a1a]" />
+                <div className="mt-1">
+                  <RadioGroupItem value="online" id="online" className="border-[#F97316] text-[#F97316]" />
+                </div>
                 <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="online" className="cursor-pointer font-serif text-lg text-[#1a1a1a]">
-                      Secure Online Payment
+                    <Label htmlFor="online" className="cursor-pointer font-bebas text-xl text-[#0B0B0F] dark:text-white tracking-wide">
+                      DIGITAL TRANSFER (SECURE)
                     </Label>
-                    <div className="flex space-x-2 opacity-60 grayscale hover:grayscale-0 transition-all">
-                      <span className="text-[10px] uppercase border border-gray-300 px-1 rounded-sm">Visa</span>
-                      <span className="text-[10px] uppercase border border-gray-300 px-1 rounded-sm">Mastercard</span>
-                      <span className="text-[10px] uppercase border border-gray-300 px-1 rounded-sm">UPI</span>
+                    <div className="flex space-x-2 grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all">
+                      <div className="h-6 w-10 bg-gray-200 dark:bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">VISA</div>
+                      <div className="h-6 w-10 bg-gray-200 dark:bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">UPI</div>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 font-light mt-2 max-w-sm">
-                    Pay securely using Credit/Debit Card, Net Banking, or UPI.
-                    Your transaction is encrypted and secure.
+                  <p className="text-xs text-gray-500 mt-2 font-mono leading-relaxed">
+                    Initiate secure encrypted transfer using Credit/Debit Grid, Net Banking, or UPI Link.
+                    <span className="block text-[#F97316] mt-1 text-[10px] uppercase font-bold tracking-widest flex items-center gap-1">
+                      <Shield className="w-3 h-3" /> Encrypted Channel Active
+                    </span>
                   </p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Cash on Delivery Option */}
+          {/* Cash on Delivery Option - Physical Token */}
           {settings.cod_enabled && total <= Number(settings.cod_threshold) && (
             <div
-              className={`relative border transition-all duration-300 ${paymentMethod === 'cod'
-                  ? 'border-[#1a1a1a] bg-white ring-1 ring-[#1a1a1a] ring-offset-2'
-                  : 'border-gray-200 bg-white hover:border-gray-400'
+              className={`relative border rounded-xl transition-all duration-300 overflow-hidden group/card ${paymentMethod === 'cod'
+                ? 'border-[#F97316] bg-[#F97316]/5 shadow-[0_0_20px_rgba(249,115,22,0.1)]'
+                : 'border-gray-200 dark:border-white/10 bg-white/50 dark:bg-black/20 hover:border-[#F97316]/30'
                 }`}
             >
               <div className="flex items-start p-6 cursor-pointer" onClick={() => setPaymentMethod('cod')}>
-                <RadioGroupItem value="cod" id="cod" className="mt-1 border-gray-300 text-[#1a1a1a]" />
+                <div className="mt-1">
+                  <RadioGroupItem value="cod" id="cod" className="border-[#F97316] text-[#F97316]" />
+                </div>
                 <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="cod" className="cursor-pointer font-serif text-lg text-[#1a1a1a]">
-                      Cash on Delivery
+                    <Label htmlFor="cod" className="cursor-pointer font-bebas text-xl text-[#0B0B0F] dark:text-white tracking-wide">
+                      PHYSICAL HANDOVER (COD)
                     </Label>
                     {Number(settings.cod_charge) > 0 && (
-                      <span className="text-xs text-gray-500 uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-[#F97316] bg-[#F97316]/10 px-2 py-1 rounded uppercase tracking-wide">
                         + {settings.currency_symbol}{Number(settings.cod_charge).toFixed(2)} Fee
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 font-light mt-2">
-                    Pay with cash upon delivery. Please ensure you have exact change.
+                  <p className="text-xs text-gray-500 mt-2 font-mono leading-relaxed">
+                    Exchange currency upon artifact delivery. Exact change recommended for smooth operation.
                   </p>
                 </div>
               </div>
@@ -102,25 +117,30 @@ const CheckoutPayment = ({
 
           {/* COD Not Available Message */}
           {settings.cod_enabled && total > Number(settings.cod_threshold) && (
-            <div className="p-4 border border-gray-200 bg-gray-50 text-gray-500 text-sm font-light text-center">
-              Cash on Delivery not available for orders above {settings.currency_symbol}{Number(settings.cod_threshold).toFixed(2)}
+            <div className="p-4 border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-white/5 rounded-lg text-center">
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-wide">
+                Physical Handover Unavailable for High-Value Transactions above {settings.currency_symbol}{Number(settings.cod_threshold).toFixed(2)}
+              </p>
             </div>
           )}
         </RadioGroup>
 
-        <div className="flex justify-between items-center pt-8 border-t border-gray-100 mt-8">
+        <div className="flex justify-between items-center pt-6 border-t border-dashed border-[#F97316]/20 mt-8">
           <Button
             variant="ghost"
             onClick={onPrev}
-            className="text-gray-400 hover:text-[#1a1a1a] hover:bg-transparent px-0 font-light"
+            className="text-gray-400 hover:text-[#F97316] hover:bg-transparent px-0 font-bold text-xs tracking-widest uppercase hover:underline"
           >
-            ← Back
+            ← Retreat
           </Button>
           <Button
             onClick={handleNext}
-            className="rounded-none bg-[#1a1a1a] text-white hover:bg-black uppercase tracking-[0.2em] px-10 h-14 text-xs font-bold transition-all duration-300"
+            className="group relative overflow-hidden bg-[#0B0B0F] dark:bg-white text-white dark:text-black font-bebas text-xl tracking-wider px-10 py-6 hover:scale-105 transition-all duration-300 rounded-lg shadow-xl shadow-[#F97316]/10"
           >
-            Review Order
+            <span className="relative z-10 flex items-center gap-2">
+              REVIEW MISSION DATA <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+            </span>
+            <div className="absolute inset-0 bg-[#F97316] transform skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
           </Button>
         </div>
       </div>

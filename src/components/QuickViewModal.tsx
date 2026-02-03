@@ -83,7 +83,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
           />
 
           <motion.div
-            className="relative w-full max-w-6xl h-auto md:h-[650px] bg-scroll-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col md:flex-row ring-1 ring-black/5"
+            className="relative w-full max-w-6xl h-[90vh] md:h-[600px] lg:h-[650px] bg-scroll-white rounded-2xl md:rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col md:flex-row ring-1 ring-black/5"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -92,13 +92,13 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
             {/* Mobile Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-50 md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-gray-200 text-shadow-black shadow-sm"
+              className="absolute top-4 right-4 z-50 md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-gray-200 text-shadow-black shadow-sm touch-manipulation"
             >
-              <span className="material-symbols-outlined">close</span>
+              <span className="material-symbols-outlined text-xl">close</span>
             </button>
 
             {/* Left Side: Image */}
-            <div className="w-full md:w-1/2 relative h-96 md:h-full bg-[#f1f5f9] overflow-hidden group">
+            <div className="w-full md:w-1/2 relative h-64 sm:h-72 md:h-full shrink-0 bg-[#f1f5f9] overflow-hidden group">
               <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.08%22/%3E%3C/svg%3E')] opacity-40 mix-blend-multiply z-10 pointer-events-none"></div>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-400/20 via-transparent to-transparent z-0"></div>
 
@@ -110,12 +110,12 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                 />
               </div>
 
-              <div className="absolute top-6 left-6 z-30 flex gap-2">
-                <span className="px-4 py-1.5 bg-primary text-white text-xs font-bold tracking-widest rounded-full uppercase shadow-md shadow-orange-200">
+              <div className="absolute top-4 left-4 md:top-6 md:left-6 z-30 flex gap-2">
+                <span className="px-3 py-1 md:px-4 md:py-1.5 bg-primary text-white text-[10px] md:text-xs font-bold tracking-widest rounded-full uppercase shadow-md shadow-orange-200">
                   New Arrival
                 </span>
                 {isLowStock && (
-                  <span className="px-4 py-1.5 bg-white/80 text-shadow-black text-xs font-bold tracking-widest rounded-full uppercase backdrop-blur-sm border border-gray-200">
+                  <span className="px-3 py-1 md:px-4 md:py-1.5 bg-white/80 text-shadow-black text-[10px] md:text-xs font-bold tracking-widest rounded-full uppercase backdrop-blur-sm border border-gray-200">
                     Limited
                   </span>
                 )}
@@ -132,99 +132,75 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                 <span className="material-symbols-outlined group-hover/close:text-primary transition-colors">close</span>
               </button>
 
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 lg:p-12">
-                <div className="mb-6">
-                  <h3 className="text-smoke-grey text-sm font-bold tracking-[0.2em] uppercase mb-2">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-5 md:p-10 lg:p-12">
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-smoke-grey text-xs md:text-sm font-bold tracking-[0.2em] uppercase mb-1 md:mb-2 text-shadow-sm">
                     {product.category || 'Obito // Streetwear'}
                   </h3>
-                  <h1 className="text-shadow-black text-3xl md:text-4xl lg:text-[40px] font-bold leading-none tracking-tight mb-4">
+                  <h1 className="text-shadow-black text-2xl md:text-4xl lg:text-[40px] font-bold leading-none tracking-tight mb-3 md:mb-4">
                     {product.name}
                   </h1>
-                  <div className="flex items-center gap-4">
-                    <span className="text-primary text-2xl md:text-3xl font-bold tracking-tight">
+                  <div className="flex items-center gap-3 md:gap-4 flex-wrap">
+                    <span className="text-primary text-xl md:text-3xl font-bold tracking-tight">
                       {formatPrice(product.price)}
                     </span>
                     {product.originalPrice && (
-                      <span className="text-smoke-grey text-lg line-through decoration-current">
+                      <span className="text-smoke-grey text-base md:text-lg line-through decoration-current">
                         {formatPrice(product.originalPrice)}
                       </span>
                     )}
-                    <div className="h-px w-12 bg-gray-200"></div>
+                    <div className="hidden sm:block h-px w-8 md:w-12 bg-gray-200"></div>
                     {displayStock > 0 ? (
-                      <span className="text-leaf-green text-sm font-medium flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <span className="text-leaf-green text-xs md:text-sm font-medium flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] md:text-[16px]">check_circle</span>
                         In Stock
                       </span>
                     ) : (
-                      <span className="text-red-500 text-sm font-medium flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">cancel</span>
+                      <span className="text-red-500 text-xs md:text-sm font-medium flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] md:text-[16px]">cancel</span>
                         Out of Stock
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 py-4 border-y border-gray-100 mb-6">
+                <div className="grid grid-cols-3 gap-2 md:gap-4 py-3 md:py-4 border-y border-gray-100 mb-5 md:mb-6">
                   <div className="flex flex-col">
-                    <span className="text-smoke-grey text-[10px] uppercase tracking-wider mb-1">Weight</span>
-                    <span className="text-shadow-black text-sm font-medium">{displayWeight}</span>
+                    <span className="text-smoke-grey text-[9px] md:text-[10px] uppercase tracking-wider mb-0.5 md:mb-1">Weight</span>
+                    <span className="text-shadow-black text-xs md:text-sm font-medium">{displayWeight}</span>
                   </div>
-                  <div className="flex flex-col border-l border-gray-100 pl-4">
-                    <span className="text-smoke-grey text-[10px] uppercase tracking-wider mb-1">SKU</span>
-                    <span className="text-shadow-black text-sm font-medium truncate" title={displaySku}>{displaySku}</span>
+                  <div className="flex flex-col border-l border-gray-100 pl-3 md:pl-4">
+                    <span className="text-smoke-grey text-[9px] md:text-[10px] uppercase tracking-wider mb-0.5 md:mb-1">SKU</span>
+                    <span className="text-shadow-black text-xs md:text-sm font-medium truncate" title={displaySku}>{displaySku}</span>
                   </div>
-                  <div className="flex flex-col border-l border-gray-100 pl-4">
-                    <span className="text-smoke-grey text-[10px] uppercase tracking-wider mb-1">Stock</span>
-                    <span className="text-shadow-black text-sm font-medium">
+                  <div className="flex flex-col border-l border-gray-100 pl-3 md:pl-4">
+                    <span className="text-smoke-grey text-[9px] md:text-[10px] uppercase tracking-wider mb-0.5 md:mb-1">Stock</span>
+                    <span className="text-shadow-black text-xs md:text-sm font-medium">
                       {displayStock > 0 ? `${displayStock} units` : 'Sold Out'}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-gray-600 text-base leading-relaxed mb-8 font-normal line-clamp-3">
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 md:mb-8 font-normal line-clamp-3 md:line-clamp-none">
                   {product.description || "Crafted from heavy-weight cotton fleece. Features high-density puff print. Embrace the darkness with this premium cut."}
                 </p>
 
-                <div className="space-y-6 mb-8">
-                  <div>
-                    <span className="text-shadow-black text-sm font-bold uppercase tracking-widest block mb-3">Select Color</span>
-                    <div className="flex gap-3">
-                      {['black', 'orange', 'white'].map((color) => {
-                        const styles: Record<string, string> = {
-                          black: 'bg-neutral-900',
-                          orange: 'bg-orange-600',
-                          white: 'bg-slate-200'
-                        };
-                        return (
-                          <button
-                            key={color}
-                            onClick={() => setSelectedColor(color)}
-                            className={cn(
-                              "w-10 h-10 rounded-full border transition-all shadow-sm",
-                              styles[color],
-                              selectedColor === color
-                                ? "border-primary ring-2 ring-offset-2 ring-primary ring-offset-white"
-                                : "border-transparent hover:border-gray-300"
-                            )}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
+                <div className="space-y-5 md:space-y-6 mb-4 md:mb-8">
+
 
                   <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-shadow-black text-sm font-bold uppercase tracking-widest">Select Size</span>
-                      <button className="text-xs text-smoke-grey hover:text-shadow-black underline decoration-dashed underline-offset-4 transition-colors">Size Guide</button>
+                    <div className="flex justify-between items-center mb-2 md:mb-3">
+                      <span className="text-shadow-black text-xs md:text-sm font-bold uppercase tracking-widest">Select Size</span>
+                      <button className="text-[10px] md:text-xs text-smoke-grey hover:text-shadow-black underline decoration-dashed underline-offset-4 transition-colors">Size Guide</button>
                     </div>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2 md:gap-3">
                       {['S', 'M', 'L', 'XL', 'XXL'].map((size) => {
-                        const isAvailable = product.available_sizes ? product.available_sizes.includes(size) : true; // Assume true if not specified
+                        const isAvailable = product.available_sizes ? product.available_sizes.includes(size) : true;
                         const isSelected = selectedSize === size;
 
                         if (size === 'XXL' && !isAvailable) {
                           return (
-                            <button key={size} disabled className="h-12 w-14 rounded-2xl border border-gray-100 text-gray-300 bg-gray-50 cursor-not-allowed text-sm font-medium flex items-center justify-center relative overflow-hidden">
+                            <button key={size} disabled className="h-10 w-12 md:h-12 md:w-14 rounded-xl md:rounded-2xl border border-gray-100 text-gray-300 bg-gray-50 cursor-not-allowed text-xs md:text-sm font-medium flex items-center justify-center relative overflow-hidden">
                               {size}
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="w-full h-px bg-gray-300 rotate-45"></div>
@@ -238,7 +214,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                             key={size}
                             onClick={() => setSelectedSize(size)}
                             className={cn(
-                              "h-12 w-14 rounded-2xl border text-sm font-medium flex items-center justify-center transition-all shadow-sm",
+                              "h-10 w-12 md:h-12 md:w-14 rounded-xl md:rounded-2xl border text-xs md:text-sm font-medium flex items-center justify-center transition-all shadow-sm",
                               isSelected
                                 ? "bg-primary text-white border-primary shadow-lg shadow-orange-200 font-bold"
                                 : "bg-white text-gray-500 border-gray-200 hover:border-primary hover:text-primary"
@@ -253,18 +229,18 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                 </div>
               </div>
 
-              <div className="p-6 md:p-10 md:pt-4 bg-scroll-white z-10 mt-auto border-t border-gray-100 md:border-none">
-                <div className="flex gap-4">
+              <div className="p-4 md:p-10 md:pt-4 bg-scroll-white z-10 mt-auto border-t border-gray-100 md:border-none shrink-0">
+                <div className="flex gap-3 md:gap-4">
                   <button
                     onClick={handleAddToCart}
                     disabled={!displayStock}
-                    className="flex-1 bg-primary hover:bg-orange-600 text-white h-14 md:h-16 rounded-full font-bold text-lg tracking-wide flex items-center justify-center gap-3 transition-all duration-300 shadow-lg shadow-orange-200 hover:shadow-xl hover:shadow-orange-300 group/btn disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-primary hover:bg-orange-600 text-white h-12 md:h-16 rounded-full font-bold text-sm md:text-lg tracking-wide flex items-center justify-center gap-2 md:gap-3 transition-all duration-300 shadow-lg shadow-orange-200 hover:shadow-xl hover:shadow-orange-300 group/btn disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span className="material-symbols-outlined text-chakra-red group-hover/btn:animate-pulse font-bold">bolt</span>
+                    <span className="material-symbols-outlined text-chakra-red group-hover/btn:animate-pulse font-bold text-lg md:text-xl">bolt</span>
                     {displayStock > 0 ? `ADD TO CART` : 'SOLD OUT'}
                   </button>
-                  <button className="h-14 md:h-16 w-14 md:w-16 rounded-full bg-gray-100 border border-gray-200 text-shadow-black hover:bg-gray-200 flex items-center justify-center transition-all group/heart shadow-sm">
-                    <span className="material-symbols-outlined group-hover/heart:text-chakra-red fill-current transition-colors">favorite</span>
+                  <button className="h-12 md:h-16 w-12 md:w-16 rounded-full bg-gray-100 border border-gray-200 text-shadow-black hover:bg-gray-200 flex items-center justify-center transition-all group/heart shadow-sm">
+                    <span className="material-symbols-outlined group-hover/heart:text-chakra-red fill-current transition-colors text-xl md:text-2xl">favorite</span>
                   </button>
                 </div>
               </div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, ChevronRight } from 'lucide-react';
+import { X, Search, ChevronRight, ScanLine, Radar, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { formatPrice } from '@/utils/currency';
 import { useStore } from '@/store/useStore';
+import { cn } from '@/lib/utils';
 
 interface SearchSidebarProps {
     isOpen: boolean;
@@ -13,7 +14,6 @@ interface SearchSidebarProps {
 
 const SearchSidebar: React.FC<SearchSidebarProps> = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
-    const { addToCart } = useStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -86,7 +86,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ isOpen, onClose }) => {
     };
 
     const handleProductClick = (product: any) => {
-        navigate(`/products/${product.sku || product.id}`);
+        navigate(`/product/${product.sku || product.id}`);
         onClose();
     };
 
@@ -96,105 +96,151 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ isOpen, onClose }) => {
                 <>
                     {/* Backdrop */}
                     <motion.div
-                        className="fixed inset-0 bg-black/35 z-50 backdrop-blur-[2px]"
+                        className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
                     />
 
-                    {/* Left-Side Drawer */}
+                    {/* Right-Side Drawer (Changed to Right for better UX often, or keep Left if preferred. User didn't specify, but sidebar usually implies right or left. Code had left. I'll stick to left to match previous behavior but upgrade visuals.) */}
+                    {/* Actually, most "Cart" is right, "Menu" is left. Search often top or full. Let's stick to Left as per original code but make it look like a high-tech panel. */}
                     <motion.div
-                        className="fixed left-0 top-0 h-full w-full md:w-[380px] bg-[var(--color-light)] shadow-2xl z-50 flex flex-col border-r border-[var(--color-secondary)]/10"
+                        className="fixed left-0 top-0 h-full w-full md:w-[450px] bg-[#F8FAFC] dark:bg-[#0B0B0F] shadow-2xl z-[100] flex flex-col border-r border-[#0B0B0F]/10 dark:border-white/10"
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
-                        transition={{ type: "tween", duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+                        transition={{ type: "spring", damping: 30, stiffness: 300 }}
                     >
+                        {/* Decorative background elements */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/2"></div>
+
                         {/* Header */}
-                        <div className="p-6 flex items-center justify-between border-b border-[var(--color-secondary)]/10">
-                            <h2 className="font-serif text-xl font-bold tracking-widest text-[var(--color-dark)]">SEARCH</h2>
+                        <div className="relative p-6 md:p-8 flex items-center justify-between border-b border-[#0B0B0F]/5 dark:border-white/5 bg-white/50 dark:bg-black/50 backdrop-blur-sm z-10">
+                            <div>
+                                <h2 className="font-bebas text-3xl tracking-tighter italic text-[#0B0B0F] dark:text-white leading-none">
+                                    MISSION <span className="text-primary">SEARCH</span>
+                                </h2>
+                                <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">
+                                    Scan Database // Level 4 Access
+                                </p>
+                            </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 text-[var(--color-accent)] hover:text-[var(--color-primary)] transition-colors rounded-full hover:bg-[var(--color-soft-bg)]/20"
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-[#0B0B0F] dark:text-white hover:bg-primary hover:text-white transition-all duration-300 group"
                             >
-                                <X className="w-6 h-6 stroke-[1.5px]" />
+                                <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
                             </button>
                         </div>
 
                         {/* Content */}
-                        <div className="flex-col flex-1 overflow-hidden flex p-6">
+                        <div className="flex-col flex-1 overflow-hidden flex p-6 md:p-8 relative z-10">
 
                             {/* Search Input */}
-                            <div className="relative mb-6">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-accent)]">
-                                    <Search className="w-5 h-5 stroke-[1.5px]" />
+                            <div className="relative mb-8 group">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-orange-600 rounded-xl opacity-20 group-hover:opacity-100 transition duration-500 blur group-focus-within:opacity-100"></div>
+                                <div className="relative flex items-center bg-white dark:bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#0B0B0F]/10 dark:border-white/10">
+                                    <div className="pl-4 text-gray-400">
+                                        <ScanLine className="w-5 h-5 animate-pulse" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter keywords to track..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        autoFocus
+                                        className="w-full pl-3 pr-4 py-4 bg-transparent border-none text-[#0B0B0F] dark:text-white placeholder:text-gray-400 focus:ring-0 font-bold tracking-wide text-sm"
+                                    />
+                                    {loading && (
+                                        <div className="pr-4">
+                                            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                        </div>
+                                    )}
                                 </div>
-                                <input
-                                    type="text"
-                                    placeholder="Search for products..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    autoFocus
-                                    className="w-full pl-12 pr-4 py-4 bg-white border border-[var(--color-soft-bg)] 
-                              rounded-[10px] text-[var(--color-dark)] placeholder:text-[var(--color-accent)]/50
-                              focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/20
-                              transition-all font-medium"
-                                />
                             </div>
 
                             {/* Results Area */}
                             <div className="flex-1 overflow-y-auto custom-scrollbar -mr-4 pr-4">
                                 {loading ? (
-                                    <div className="flex justify-center py-12">
-                                        <div className="w-6 h-6 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                                        <Radar className="w-12 h-12 text-primary animate-spin-slow opacity-50" />
+                                        <p className="text-xs font-bold tracking-widest text-gray-400 animate-pulse">SCANNING ARCHIVES...</p>
                                     </div>
                                 ) : searchResults.length > 0 ? (
                                     <div className="space-y-4">
-                                        {searchResults.map((product) => (
-                                            <div
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                                                {searchResults.length} Matches Found
+                                            </span>
+                                        </div>
+                                        {searchResults.map((product, index) => (
+                                            <motion.div
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: index * 0.05 }}
                                                 key={product.id}
                                                 onClick={() => handleProductClick(product)}
-                                                className="flex gap-4 p-3 rounded-lg hover:bg-white border border-transparent hover:border-[var(--color-secondary)]/10 cursor-pointer group transition-all"
+                                                className="flex gap-4 p-3 rounded-2xl hover:bg-white dark:hover:bg-white/5 border border-transparent hover:border-[#0B0B0F]/5 dark:hover:border-white/5 cursor-pointer group transition-all"
                                             >
-                                                <div className="w-16 h-20 bg-[var(--color-bg)] rounded overflow-hidden flex-shrink-0">
+                                                <div className="w-16 h-20 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex-shrink-0 relative">
                                                     <img
                                                         src={product.images?.[0] || '/placeholder.svg'}
                                                         alt={product.name}
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                     />
+                                                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors"></div>
                                                 </div>
                                                 <div className="flex-1">
-                                                    <h4 className="font-serif text-[var(--color-dark)] text-sm group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                                                    <h4 className="font-bebas text-lg tracking-wide text-[#0B0B0F] dark:text-white group-hover:text-primary transition-colors line-clamp-1">
                                                         {product.name}
                                                     </h4>
-                                                    {product.categories?.name && (
-                                                        <p className="text-[10px] uppercase tracking-wider text-[var(--color-accent)] mt-1">{product.categories.name}</p>
-                                                    )}
-                                                    <p className="text-sm font-semibold text-[var(--color-secondary)] mt-1">
-                                                        {formatPrice(product.price)}
-                                                    </p>
+                                                    <div className="flex items-center justify-between mt-1">
+                                                        <div>
+                                                            {product.categories?.name && (
+                                                                <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-white/10 text-gray-500">
+                                                                    {product.categories.name}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-sm font-black text-[#0B0B0F] dark:text-white">
+                                                            {formatPrice(product.price)}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                <div className="flex items-center justify-center w-8 text-gray-300 group-hover:text-primary transition-colors">
+                                                    <ChevronRight className="w-5 h-5" />
+                                                </div>
+                                            </motion.div>
                                         ))}
                                     </div>
                                 ) : searchQuery.length > 1 ? (
-                                    <div className="text-center py-12">
-                                        <p className="text-[var(--color-accent)] text-sm">No products found matching "{searchQuery}"</p>
+                                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                                        <Database className="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4" />
+                                        <p className="text-sm font-bold text-[#0B0B0F] dark:text-white mb-1">DATA MARKER NOT FOUND</p>
+                                        <p className="text-xs text-gray-500">Try adjusting your search parameters.</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-dark)]">New Arrivals</h3>
+                                        <div className="flex items-center justify-between border-b border-dashed border-gray-200 dark:border-gray-800 pb-2">
+                                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B0B0F] dark:text-white flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                                Recommended Intel
+                                            </h3>
                                         </div>
                                         <div className="space-y-4">
-                                            {suggestedProducts.map((product) => (
-                                                <div
+                                            {suggestedProducts.map((product, index) => (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: index * 0.1 }}
                                                     key={product.id}
                                                     onClick={() => handleProductClick(product)}
-                                                    className="flex gap-4 p-3 rounded-lg hover:bg-white border border-transparent hover:border-[var(--color-secondary)]/10 cursor-pointer group transition-all"
+                                                    className="flex gap-4 p-3 rounded-2xl hover:bg-white dark:hover:bg-white/5 border border-transparent hover:border-[#0B0B0F]/5 dark:hover:border-white/5 cursor-pointer group transition-all"
                                                 >
-                                                    <div className="w-16 h-20 bg-[var(--color-bg)] rounded overflow-hidden flex-shrink-0">
+                                                    <div className="w-16 h-20 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex-shrink-0 relative">
+                                                        <span className="absolute top-0 left-0 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 uppercase z-10">HOT</span>
                                                         <img
                                                             src={product.images?.[0] || '/placeholder.svg'}
                                                             alt={product.name}
@@ -202,17 +248,17 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ isOpen, onClose }) => {
                                                         />
                                                     </div>
                                                     <div className="flex-1">
-                                                        <h4 className="font-serif text-[var(--color-dark)] text-sm group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                                                        <h4 className="font-bebas text-lg tracking-wide text-[#0B0B0F] dark:text-white group-hover:text-primary transition-colors line-clamp-1">
                                                             {product.name}
                                                         </h4>
-                                                        {product.categories?.name && (
-                                                            <p className="text-[10px] uppercase tracking-wider text-[var(--color-accent)] mt-1">{product.categories.name}</p>
-                                                        )}
-                                                        <p className="text-sm font-semibold text-[var(--color-secondary)] mt-1">
+                                                        <p className="text-[10px] text-gray-400 font-medium uppercase mt-0.5 line-clamp-1">
+                                                            {product.categories?.name || 'Classified Gear'}
+                                                        </p>
+                                                        <p className="text-sm font-black text-[#0B0B0F] dark:text-white mt-1">
                                                             {formatPrice(product.price)}
                                                         </p>
                                                     </div>
-                                                </div>
+                                                </motion.div>
                                             ))}
                                         </div>
                                     </div>
@@ -221,13 +267,13 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ isOpen, onClose }) => {
 
                         </div>
 
-                        {/* Footer (Optional) */}
-                        <div className="p-6 border-t border-[var(--color-secondary)]/10 bg-[var(--color-soft-bg)]/10">
+                        {/* Footer */}
+                        <div className="p-6 md:p-8 border-t border-[#0B0B0F]/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm relative z-10">
                             <button
                                 onClick={() => { navigate('/products'); onClose(); }}
-                                className="w-full py-3 text-xs font-bold uppercase tracking-widest text-[var(--color-dark)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2 group"
+                                className="w-full py-4 bg-[#0B0B0F] dark:bg-white text-white dark:text-[#0B0B0F] rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg shadow-black/5"
                             >
-                                View All Products
+                                Access Full Database
                                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
                         </div>

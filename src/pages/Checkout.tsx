@@ -704,21 +704,41 @@ const Checkout = () => {
   }
 
   return (
-    <div className="bg-[#F9F9F7] min-h-screen py-16">
-      <div className="container mx-auto px-4 lg:px-8 max-w-[1400px]">
+    <div className="relative min-h-screen bg-[#F8FAFC] dark:bg-[#0B0B0F] overflow-hidden transition-colors duration-500 font-display selection:bg-[#F97316] selection:text-white pb-20">
+
+      {/* Background Elements */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-soft-light"></div>
+        <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#F97316]/5 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] animation-delay-2000 animate-pulse"></div>
+      </div>
+
+      <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1400px] py-8 lg:py-12">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-16 border-b border-gray-200 pb-6">
-          <Button variant="ghost" className="p-0 hover:bg-transparent" onClick={() => navigate('/cart')}>
-            <div className="flex items-center text-[#1a1a1a] hover:text-black transition-colors group">
-              <ArrowLeft className="mr-3 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              <span className="uppercase tracking-widest text-xs font-bold">Back to Bag</span>
+        <div className="flex items-center justify-between mb-12 relative">
+          {/* Decorative Line */}
+          <div className="absolute bottom-[-20px] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#F97316]/30 to-transparent"></div>
+
+          <Button variant="ghost" className="p-0 hover:bg-transparent group" onClick={() => navigate('/cart')}>
+            <div className="flex items-center gap-3 text-gray-500 group-hover:text-[#F97316] transition-colors">
+              <div className="p-2 border border-gray-200 dark:border-white/10 rounded-full group-hover:border-[#F97316] group-hover:bg-[#F97316]/10 transition-all">
+                <ArrowLeft className="w-4 h-4" />
+              </div>
+              <span className="font-bebas text-lg tracking-wider text-[#0B0B0F] dark:text-white group-hover:text-[#F97316] mt-1">RETURN TO BASE</span>
             </div>
           </Button>
-          <div className="text-center">
-            <h1 className="text-3xl font-serif text-[#1a1a1a]">Secure Checkout</h1>
+
+          <div className="text-center group cursor-default">
+            <h1 className="text-4xl md:text-6xl font-bebas italic text-[#0B0B0F] dark:text-white tracking-tighter leading-none group-hover:skew-x-[-2deg] transition-transform duration-300">
+              MISSION <span className="text-[#F97316]">CHECKOUT</span>
+            </h1>
+            <p className="text-[10px] md:text-xs font-mono font-bold tracking-[0.3em] text-gray-400 uppercase mt-1">
+              SECURE TRANSMISSION // LEVEL 4 ENCRYPTION
+            </p>
           </div>
-          <div className="w-24"></div> {/* Spacer for balance */}
+
+          <div className="hidden md:block w-32"></div> {/* Geometric Spacer */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">

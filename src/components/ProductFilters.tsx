@@ -1,11 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Filter, X, ChevronDown, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ProductFilters {
@@ -25,7 +18,6 @@ interface ProductFiltersProps {
 }
 
 const ProductFiltersComponent = ({ onFiltersChange, categories, className = "" }: ProductFiltersProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<ProductFilters>({
     categories: [],
     priceRange: [0, 50000],
@@ -55,24 +47,10 @@ const ProductFiltersComponent = ({ onFiltersChange, categories, className = "" }
       setAvailableFeatures(data?.map(f => f.name) || []);
     } catch (error) {
       console.error('Error fetching features:', error);
-      // Fallback to clothing-specific default features
+      // Fallback defaults
       setAvailableFeatures([
-        'Pure Cotton',
-        'Silk Blend',
-        'Hand Woven',
-        'Zari Work',
-        'Embroidered',
-        'Digital Print',
-        'Festive Wear',
-        'Casual Chic',
-        'Bridal Collection',
-        'Sustainable Fabric',
-        'Ready to Wear',
-        'Custom Tailored',
-        'Designer',
-        'Limited Edition',
-        'Hand Block Print',
-        'Banarasi'
+        'Cotton', 'Silk', 'Zari', 'Embroidered', 'Festive',
+        'Casual', 'Bridal', 'Sustainable', 'Designer', 'Limited'
       ]);
     } finally {
       setLoadingFeatures(false);
@@ -127,190 +105,149 @@ const ProductFiltersComponent = ({ onFiltersChange, categories, className = "" }
   const activeFiltersCount = getActiveFiltersCount();
 
   return (
-    <div className={className}>
-      {/* Mobile Filter Toggle */}
-      <div className="lg:hidden mb-4">
-        <Button
-          variant="outline"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full justify-between font-serif text-[var(--color-dark)]"
-        >
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4" />
-            <span>Refine Selection</span>
-            {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="bg-[var(--color-primary)] text-white">{activeFiltersCount}</Badge>
-            )}
-          </div>
-          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-        </Button>
-      </div>
+    <div className={`${className} font-display`}>
+      <div className="space-y-10">
 
-      {/* Filter Content */}
-      <div className={`${isOpen ? 'block' : 'hidden'} lg:block`}>
-        <div className="space-y-8">
-          <div className="flex items-center justify-between border-b border-[var(--color-secondary)]/20 pb-4">
-            <h3 className="font-serif text-lg text-[var(--color-dark)]">Refine By</h3>
-            {activeFiltersCount > 0 && (
-              <button
-                onClick={clearAllFilters}
-                className="text-xs uppercase tracking-widest text-[var(--color-destructive)] hover:text-[var(--color-dark)] transition-colors underline"
-              >
-                Clear All
-              </button>
-            )}
-          </div>
-
-          {/* Categories */}
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm uppercase tracking-wider text-[var(--color-secondary)]">Categories</h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--color-secondary)]/20 pr-2">
-              {categories.filter(c => c !== 'All').map((category) => (
-                <div key={category} className="flex items-center space-x-3 group">
-                  <Checkbox
-                    id={`category-${category}`}
-                    checked={filters.categories.includes(category)}
-                    onCheckedChange={() => toggleCategory(category)}
-                    className="border-[var(--color-secondary)]/40 data-[state=checked]:bg-[var(--color-primary)] data-[state=checked]:border-[var(--color-primary)]"
-                  />
-                  <label
-                    htmlFor={`category-${category}`}
-                    className="text-sm cursor-pointer text-[var(--color-accent)] group-hover:text-[var(--color-primary)] transition-colors font-light"
-                  >
-                    {category}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Price Range */}
-          <div className="space-y-4">
-            <h4 className="font-medium text-sm uppercase tracking-wider text-[var(--color-secondary)]">Price Range</h4>
-            <div className="px-2">
-              <Slider
-                min={0}
-                max={50000}
-                step={500}
-                value={filters.priceRange}
-                onValueChange={(value) => updateFilters({ priceRange: value as [number, number] })}
-                className="w-full my-4"
-              />
-            </div>
-            <div className="flex justify-between text-sm font-medium text-[var(--color-dark)] px-1">
-              <span>₹{filters.priceRange[0].toLocaleString()}</span>
-              <span>₹{filters.priceRange[1].toLocaleString()}</span>
-            </div>
-            {/* Quick price filters */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: 'Under ₹2k', range: [0, 2000] },
-                { label: '₹2k - ₹5k', range: [2000, 5000] },
-                { label: '₹5k - ₹10k', range: [5000, 10000] },
-                { label: 'Above ₹10k', range: [10000, 50000] }
-              ].map((pf, i) => (
-                <button
-                  key={i}
-                  onClick={() => updateFilters({ priceRange: pf.range as [number, number] })}
-                  className="bg-[var(--color-bg)] hover:bg-[var(--color-secondary)]/10 text-[var(--color-accent)] text-xs py-1 px-3 rounded-full border border-[var(--color-secondary)]/20 transition-all"
-                >
-                  {pf.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm uppercase tracking-wider text-[var(--color-secondary)]">Collection</h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--color-secondary)]/20 pr-2">
-              {loadingFeatures ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center space-x-2">
-                      <div className="w-4 h-4 bg-gray-100 rounded animate-pulse" />
-                      <div className="h-4 bg-gray-100 rounded w-24 animate-pulse" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                availableFeatures.map((feature) => (
-                  <div key={feature} className="flex items-center space-x-3 group">
-                    <Checkbox
-                      id={`feature-${feature}`}
-                      checked={filters.features.includes(feature)}
-                      onCheckedChange={() => toggleFeature(feature)}
-                      className="border-[var(--color-secondary)]/40 data-[state=checked]:bg-[var(--color-primary)] data-[state=checked]:border-[var(--color-primary)]"
-                    />
-                    <label
-                      htmlFor={`feature-${feature}`}
-                      className="text-sm cursor-pointer text-[var(--color-accent)] group-hover:text-[var(--color-primary)] transition-colors font-light"
-                    >
-                      {feature}
-                    </label>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Additional Filters */}
-          <div className="space-y-3 pt-2 border-t border-[var(--color-secondary)]/10">
-            <div className="flex items-center space-x-3 group">
-              <Checkbox
-                id="in-stock"
-                checked={filters.inStock}
-                onCheckedChange={(checked) => updateFilters({ inStock: !!checked })}
-                className="border-[var(--color-secondary)]/40 data-[state=checked]:bg-[var(--color-primary)] data-[state=checked]:border-[var(--color-primary)]"
-              />
-              <label htmlFor="in-stock" className="text-sm cursor-pointer text-[var(--color-accent)] font-light">
-                In Stock Only
-              </label>
-            </div>
-            <div className="flex items-center space-x-3 group">
-              <Checkbox
-                id="bestseller"
-                checked={filters.isBestseller}
-                onCheckedChange={(checked) => updateFilters({ isBestseller: !!checked })}
-                className="border-[var(--color-secondary)]/40 data-[state=checked]:bg-[var(--color-primary)] data-[state=checked]:border-[var(--color-primary)]"
-              />
-              <label htmlFor="bestseller" className="text-sm cursor-pointer text-[var(--color-accent)] font-light">
-                Bestsellers Only
-              </label>
-            </div>
-          </div>
-
-          {/* Sort Options - Often handled outside but good to have here too */}
-          <div className="space-y-3 pt-2 border-t border-[var(--color-secondary)]/10">
-            <h4 className="font-medium text-sm uppercase tracking-wider text-[var(--color-secondary)]">Sort By</h4>
-            <div className="space-y-2">
-              {[
-                { value: 'name', label: 'Name (A-Z)' },
-                { value: 'price-low', label: 'Price: Low to High' },
-                { value: 'price-high', label: 'Price: High to Low' },
-                { value: 'newest', label: 'Newest Arrivals' }
-              ].map((option) => (
-                <div key={option.value} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={`sort-${option.value}`}
-                    checked={filters.sortBy === option.value}
-                    onCheckedChange={(checked) =>
-                      updateFilters({ sortBy: checked ? option.value : 'name' })
-                    }
-                    className="rounded-full border-[var(--color-secondary)]/40 data-[state=checked]:bg-[var(--color-primary)] data-[state=checked]:border-[var(--color-primary)]"
-                  />
-                  <label
-                    htmlFor={`sort-${option.value}`}
-                    className="text-sm cursor-pointer text-[var(--color-accent)] font-light"
-                  >
-                    {option.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        {/* Header Section */}
+        <div className="flex items-center justify-between border-b-2 border-[#F97316]/20 pb-4 relative">
+          <div className="absolute bottom-[-2px] left-0 w-1/3 h-[2px] bg-[#F97316]"></div>
+          <h3 className="font-bebas text-2xl text-[#0B0B0F] dark:text-white tracking-wider flex items-center gap-2 italic">
+            <span className="material-symbols-outlined text-[#F97316]">filter_alt</span>
+            REFINE GEAR
+          </h3>
+          {activeFiltersCount > 0 && (
+            <button
+              onClick={clearAllFilters}
+              className="text-[10px] font-bold uppercase tracking-widest text-[#EF4444] hover:text-[#F97316] transition-colors flex items-center gap-1 group"
+            >
+              <span className="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform">restart_alt</span>
+              RESET
+            </button>
+          )}
         </div>
+
+        {/* Categories - GenZ Tag Style */}
+        <div className="space-y-4">
+          <h4 className="font-bebas text-lg text-gray-400 tracking-widest uppercase flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]"></span>
+            CATEGORIES
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {categories.filter(c => c !== 'All').map((category) => {
+              const isActive = filters.categories.includes(category);
+              return (
+                <button
+                  key={category}
+                  onClick={() => toggleCategory(category)}
+                  className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider skew-x-[-10deg] transition-all duration-300 border ${isActive
+                      ? 'bg-[#F97316] text-white border-[#F97316] shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF]'
+                      : 'bg-transparent text-gray-500 border-gray-300 dark:border-gray-700 hover:border-[#F97316] hover:text-[#F97316]'
+                    }`}
+                >
+                  <div className="skew-x-[10deg]">{category}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Price Range - Cyberpunk Slider */}
+        <div className="space-y-6">
+          <h4 className="font-bebas text-lg text-gray-400 tracking-widest uppercase flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]"></span>
+            BOUNTY RANGE (₹)
+          </h4>
+          <div className="px-2">
+            <input
+              type="range"
+              min="0"
+              max="50000"
+              step="1000"
+              value={filters.priceRange[1]}
+              onChange={(e) => updateFilters({ priceRange: [filters.priceRange[0], parseInt(e.target.value)] })}
+              className="w-full h-1 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-[#F97316]"
+            />
+            <div className="flex justify-between mt-3 font-mono text-xs font-bold text-[#F97316]">
+              <span>₹0</span>
+              <span className="bg-[#F97316]/10 px-2 py-1 rounded border border-[#F97316]/20">
+                UP TO ₹{filters.priceRange[1].toLocaleString()}
+              </span>
+              <span>₹50k+</span>
+            </div>
+          </div>
+
+          {/* Quick Action Chips */}
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: 'Under ₹2k', max: 2000 },
+              { label: 'Under ₹5k', max: 5000 },
+              { label: 'Under ₹10k', max: 10000 },
+              { label: 'Premium', max: 50000 }
+            ].map((pf, i) => (
+              <button
+                key={i}
+                onClick={() => updateFilters({ priceRange: [0, pf.max] })}
+                className="text-[10px] font-bold uppercase tracking-wide py-2 border border-dashed border-gray-300 dark:border-gray-700 hover:border-[#F97316] hover:text-[#F97316] transition-colors rounded-sm"
+              >
+                {pf.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Features - Custom Checkbox List */}
+        <div className="space-y-4">
+          <h4 className="font-bebas text-lg text-gray-400 tracking-widest uppercase flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]"></span>
+            ATTRIBUTES
+          </h4>
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+            {loadingFeatures ? (
+              <div className="animate-pulse space-y-2">
+                <div className="h-6 bg-gray-100 dark:bg-gray-800 rounded w-3/4"></div>
+                <div className="h-6 bg-gray-100 dark:bg-gray-800 rounded w-1/2"></div>
+              </div>
+            ) : availableFeatures.map((feature) => {
+              const isChecked = filters.features.includes(feature);
+              return (
+                <label key={feature} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-[#F97316]/5 transition-colors rounded">
+                  <div className={`relative w-4 h-4 border-2 transition-colors duration-300 ${isChecked ? 'border-[#F97316] bg-[#F97316]' : 'border-gray-300 dark:border-gray-600 group-hover:border-[#F97316]'}`}>
+                    {isChecked && (
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-[10px] material-symbols-outlined font-bold">check</span>
+                    )}
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={isChecked}
+                    onChange={() => toggleFeature(feature)}
+                  />
+                  <span className={`text-xs font-bold uppercase tracking-wide transition-colors ${isChecked ? 'text-[#F97316]' : 'text-gray-500 dark:text-gray-400 group-hover:text-[#F97316]'}`}>
+                    {feature}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Status Toggles - Switch Style */}
+        <div className="space-y-3 pt-4 border-t border-dashed border-gray-200 dark:border-gray-800">
+          {[
+            { id: 'inStock', label: 'IN STOCK ONLY', checked: filters.inStock },
+            { id: 'isBestseller', label: 'BESTSELLERS', checked: filters.isBestseller }
+          ].map((toggle) => (
+            <div key={toggle.id} className="flex items-center justify-between group cursor-pointer" onClick={() => updateFilters({ [toggle.id]: !toggle.checked })}>
+              <span className={`text-xs font-bold uppercase tracking-widest group-hover:text-[#F97316] transition-colors ${toggle.checked ? 'text-[#0B0B0F] dark:text-white' : 'text-gray-400'}`}>
+                {toggle.label}
+              </span>
+              <div className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${toggle.checked ? 'bg-[#F97316]' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all duration-300 ${toggle.checked ? 'left-6 shadow-sm' : 'left-1'}`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </div>
   );

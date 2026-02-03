@@ -115,14 +115,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Product Image */}
         {/* Product Image */}
-        <div
-          className="relative w-full h-full z-10 transition-transform duration-700 ease-out group-hover:scale-110 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url('${primaryImage}')` }}
-        >
+        <div className="relative w-full h-full z-10 transition-transform duration-700 ease-out group-hover:scale-110">
+          {/* Primary Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-300"
+            style={{ backgroundImage: `url('${primaryImage}')` }}
+          ></div>
+
           {/* Secondary Image Overlay for Hover Effect */}
           {product.images && product.images.length > 1 && (
             <div
-              className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
+              className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out z-20"
               style={{ backgroundImage: `url('${product.images[1]}')` }}
             ></div>
           )}
