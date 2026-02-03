@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
-import { toNumber, formatCurrency, calculatePercentage, meetsThreshold } from '../utils/settingsHelpers';
+import { toNumber, formatCurrency, calculatePercentage } from '../utils/settingsHelpers';
 
 interface CartSidebarProps {
   isAdminRoute?: boolean;
@@ -11,8 +11,6 @@ interface CartSidebarProps {
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ isAdminRoute = false }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
-
-
 
   const {
     cartItems,
@@ -44,9 +42,8 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isAdminRoute = false }) => {
     return null;
   }
 
-
   if (settingsLoading) {
-    return null; // Or a subtle loader, but keeping it clean as per reference style preferences
+    return null;
   }
 
   // Calculations
@@ -79,10 +76,10 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isAdminRoute = false }) => {
   return (
     <AnimatePresence>
       {isCartOpen && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50 flex justify-end">
           {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -92,144 +89,156 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isAdminRoute = false }) => {
           {/* Sidebar */}
           <motion.div
             ref={sidebarRef}
-            className="fixed top-0 right-0 h-full w-full max-w-md glass border-l border-white/20 dark:border-white/5 shadow-2xl flex flex-col bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl"
+            className="relative flex h-full w-full max-w-[480px] flex-col bg-[#F8FAFC] dark:bg-[#0B0B0F] border-l-4 border-primary shadow-2xl overflow-hidden grain-texture"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           >
             {/* Header */}
-            <div className="p-6 border-b border-gray-200/50 dark:border-white/10 flex items-center justify-between">
-              <h2 className="text-2xl font-display font-medium text-gray-900 dark:text-white">Your Cart</h2>
+            <header className="flex items-center justify-between px-8 pt-10 pb-6">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-[#0B0B0F] dark:text-white text-3xl font-display font-bold tracking-tighter uppercase leading-none">YOUR ARCHIVE</h2>
+                <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase">OBITO / SHINOBI GEAR</span>
+              </div>
               <button
                 onClick={toggleCart}
-                className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
+                className="size-10 flex items-center justify-center rounded-full bg-[#E7E5E4] hover:bg-[#D6D3D1] transition-colors"
               >
-                <span className="material-symbols-outlined text-gray-600 dark:text-gray-400">close</span>
+                <span className="material-symbols-outlined text-[#0B0B0F]">close</span>
               </button>
-            </div>
+            </header>
 
-            {/* Free Shipping Progress */}
+            {/* Progress Bar Section (Chakra Levels) */}
             {freeDeliveryThreshold > 0 && (
-              <div className="px-6 py-4 bg-gray-50/50 dark:bg-white/5 border-b border-gray-200/50 dark:border-white/10">
-                <div className="flex justify-between items-end mb-2">
+              <div className="px-8 py-4">
+                <div className="flex flex-col gap-3 p-5 rounded-2xl bg-white/50 border border-stone-100 chakra-glow">
+                  <div className="flex gap-6 justify-between items-end">
+                    <p className="text-[#0B0B0F] dark:text-white text-sm font-bold uppercase tracking-wide">Chakra Levels</p>
+                    <p className="text-primary text-lg font-bold leading-none">{Math.round(progress)}%</p>
+                  </div>
+                  <div className="relative h-2 rounded-full bg-stone-200 overflow-hidden">
+                    <div className="absolute inset-y-0 left-0 rounded-full bg-primary" style={{ width: `${progress}%` }}>
+                      {/* Subtle chakra pulse simulation */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent w-1/2 -translate-x-full animate-[pulse_2s_infinite]"></div>
+                    </div>
+                  </div>
                   {progress < 100 ? (
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      You're <span className="text-[#059669] font-bold">{formatCurrency(amountToFreeShipping, settings.currency_symbol)}</span> away from free shipping
+                    <p className="text-stone-500 text-xs font-medium">
+                      Add <span className="text-[#0B0B0F] dark:text-white font-bold">{formatCurrency(amountToFreeShipping, settings.currency_symbol)}</span> more for <span className="text-green-600 font-bold uppercase">Free Instant Transmission</span>
                     </p>
                   ) : (
-                    <p className="text-sm font-medium text-[#059669]">
-                      You've unlocked <span className="font-bold">FREE SHIPPING</span>
-                    </p>
+                    <p className="text-green-600 text-xs font-bold uppercase">Mission Requirement Met: Free Delivery</p>
                   )}
-                  <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-tighter">{Math.round(progress)}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[#059669] rounded-full transition-all duration-1000"
-                    style={{ width: `${progress}%` }}
-                  ></div>
                 </div>
               </div>
             )}
 
-            {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
+            {/* Cart Items Scroll Area */}
+            <div className="flex-1 overflow-y-auto px-8 py-4 space-y-6">
               {cartItems.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center p-8 text-center opacity-60">
-                  <span className="material-symbols-outlined text-6xl mb-4">shopping_bag</span>
-                  <p className="text-lg font-medium">Your bag is empty</p>
-                  <p className="text-sm">Time to start shopping!</p>
+                <div className="h-full flex flex-col items-center justify-center text-center opacity-60">
+                  <span className="material-symbols-outlined text-6xl mb-4 text-[#0B0B0F]/20 dark:text-white/20">shopping_bag</span>
+                  <p className="text-lg font-bold font-display text-[#0B0B0F] dark:text-white">Your archive is empty.</p>
+                  <p className="text-sm font-medium text-stone-500 uppercase tracking-widest mt-2">Acquire new equipment</p>
                 </div>
               ) : (
-                <div className="p-6 space-y-6">
-                  {cartItems.map((item) => (
-                    <div key={`${item.id}-${item.selectedSize}`} className="flex gap-4 group animate-in slide-in-from-right-4 duration-500">
-                      <div className="w-24 h-32 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
+                cartItems.map((item) => (
+                  <div key={`${item.id}-${item.selectedSize}`} className="flex items-center gap-5 group">
+                    <div className="relative shrink-0">
+                      <div
+                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-xl size-24 border border-stone-100 chakra-glow bg-gray-100 dark:bg-gray-800"
+                        style={{ backgroundImage: item.image ? `url("${item.image}")` : 'none' }}
+                      >
+                        {!item.image && <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">NO IMG</div>}
                       </div>
-                      <div className="flex-1 flex flex-col justify-between py-1">
-                        <div>
-                          <div className="flex justify-between items-start gap-2">
-                            <h3 className="font-display text-lg text-gray-900 dark:text-white leading-tight line-clamp-2">{item.name}</h3>
-                            <button
-                              onClick={() => removeFromCart(item.id, item.selectedSize)}
-                              className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
-                            >
-                              <span className="material-symbols-outlined text-sm">close</span>
-                            </button>
-                          </div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Size: {item.selectedSize || 'Standard'} • {formatCurrency(item.price, settings.currency_symbol)}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center border border-gray-200 dark:border-white/10 rounded-full px-2 py-1">
-                            <button
-                              onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}
-                              className="p-1 hover:text-[#059669] transition-colors flex items-center disabled:opacity-30"
-                              disabled={item.quantity <= 1}
-                            >
-                              <span className="material-symbols-outlined text-sm">remove</span>
-                            </button>
-                            <span className="px-3 text-sm font-medium text-gray-900 dark:text-white min-w-[1.5rem] text-center">{item.quantity}</span>
-                            <button
-                              onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
-                              className="p-1 hover:text-[#059669] transition-colors flex items-center"
-                            >
-                              <span className="material-symbols-outlined text-sm">add</span>
-                            </button>
-                          </div>
-                          <p className="font-semibold text-gray-900 dark:text-white">
-                            {formatCurrency(item.price * item.quantity, settings.currency_symbol)}
-                          </p>
-                        </div>
+                      <div className="absolute -top-1 -right-1 size-6 bg-white rounded-full flex items-center justify-center border border-primary/20 shadow-sm">
+                        <span className="material-symbols-outlined text-[14px] text-primary fill-1">adjust</span>
                       </div>
                     </div>
-                  ))}
-                </div>
+
+                    <div className="flex flex-col flex-1 justify-center gap-1">
+                      <div className="flex justify-between items-start">
+                        <p className="text-[#0B0B0F] dark:text-white text-lg font-bold leading-tight font-display line-clamp-1">{item.name}</p>
+                        <span className="text-[#0B0B0F] dark:text-white font-bold">{formatCurrency(item.price * item.quantity, settings.currency_symbol)}</span>
+                      </div>
+                      <p className="text-stone-500 text-xs font-medium uppercase tracking-wider">
+                        Size: {item.selectedSize || 'Std'} | Unit: {formatCurrency(item.price, settings.currency_symbol)}
+                      </p>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}
+                            disabled={item.quantity <= 1}
+                            className="size-7 flex items-center justify-center rounded-full bg-[#0B0B0F] text-white hover:bg-primary transition-colors disabled:opacity-50"
+                          >
+                            <span className="material-symbols-outlined text-sm">remove</span>
+                          </button>
+                          <span className="text-[#0B0B0F] dark:text-white font-bold text-sm w-4 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
+                            className="size-7 flex items-center justify-center rounded-full bg-[#0B0B0F] text-white hover:bg-primary transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-sm">add</span>
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => removeFromCart(item.id, item.selectedSize)}
+                          className="text-stone-400 hover:text-red-500 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-xl">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
 
-            {/* Footer */}
+            {/* Sidebar Footer */}
             {cartItems.length > 0 && (
-              <div className="p-6 border-t border-gray-200 dark:border-white/10 space-y-4 bg-white/50 dark:bg-black/20 backdrop-blur-md">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Subtotal ({cartItems.reduce((acc, i) => acc + i.quantity, 0)} items)</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(subtotal, settings.currency_symbol)}</span>
+              <footer className="bg-white dark:bg-[#0B0B0F] p-8 border-t border-stone-100 dark:border-white/10">
+                <div className="space-y-3 mb-8">
+                  <div className="flex justify-between text-stone-500 text-sm font-medium uppercase tracking-widest">
+                    <span>Subtotal</span>
+                    <span className="text-[#0B0B0F] dark:text-white font-bold">{formatCurrency(subtotal, settings.currency_symbol)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Tax</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(tax, settings.currency_symbol)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Delivery Fee</span>
-                    <span className={`font-medium ${deliveryFee === 0 ? 'text-[#059669]' : 'text-gray-900 dark:text-white'}`}>
-                      {deliveryFee === 0 ? 'Free' : formatCurrency(deliveryFee, settings.currency_symbol)}
+                  <div className="flex justify-between text-stone-500 text-sm font-medium uppercase tracking-widest">
+                    <span>Shipping</span>
+                    <span className={`font-bold ${deliveryFee === 0 ? 'text-green-600' : 'text-[#0B0B0F] dark:text-white'}`}>
+                      {deliveryFee === 0 ? 'Free Instant Transmission' : formatCurrency(deliveryFee, settings.currency_symbol)}
                     </span>
                   </div>
-                </div>
-                <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex justify-between items-center mb-6">
-                  <span className="text-lg font-display font-semibold text-gray-900 dark:text-white">Total</span>
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(total, settings.currency_symbol)}</span>
+                  <div className="pt-4 flex justify-between items-center border-t border-stone-100 dark:border-white/10">
+                    <span className="text-[#0B0B0F] dark:text-white text-xl font-bold uppercase font-display">Total ARCHIVE</span>
+                    <span className="text-primary text-2xl font-bold tracking-tighter">{formatCurrency(total, settings.currency_symbol)}</span>
+                  </div>
                 </div>
 
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-[#1a1a1a] hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-white py-4 rounded-xl font-semibold tracking-wider transition-all transform active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 group"
+                  className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-6 px-8 flex items-center justify-between group transition-all transform active:scale-[0.98] btn-summon relative overflow-hidden"
                 >
-                  PROCEED TO CHECKOUT
-                  <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  <div className="summon-particles"></div>
+                  {/* Summoning Circle SVG */}
+                  <svg className="circle-svg absolute inset-0 w-full h-full text-white/20" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="5,5" />
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    <path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="currentColor" strokeWidth="0.5" transform="rotate(180 50 50)" />
+                    <path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                  </svg>
+
+                  <span className="text-xl font-bold uppercase tracking-tighter font-display relative z-10">Proceed to Checkout</span>
+                  <div className="flex items-center gap-2 relative z-10">
+                    <span className="h-[1px] w-8 bg-white/40 group-hover:w-12 transition-all"></span>
+                    <span className="material-symbols-outlined">arrow_forward</span>
+                  </div>
                 </button>
-                <p className="text-center text-[10px] uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                  Secure Checkout powered by SSL
+                <p className="text-center text-[10px] text-stone-400 mt-6 uppercase tracking-[0.3em]">
+                  SECURE NINJA ENCRYPTION ENABLED
                 </p>
-              </div>
+              </footer>
             )}
           </motion.div>
         </div>

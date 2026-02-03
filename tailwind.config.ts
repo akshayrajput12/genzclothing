@@ -37,6 +37,7 @@ export default {
 				'serif': ['Merriweather', 'serif'],
 				'playfair': ['"Playfair Display"', 'serif'],
 				'jetbrains': ['"JetBrains Mono"', 'monospace'],
+				'spline': ['"Spline Sans"', 'sans-serif'],
 			},
 			colors: {
 				'hero-primary': "#F97316", // Ninja Orange

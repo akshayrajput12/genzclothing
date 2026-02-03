@@ -154,9 +154,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </button>
                 <button
                   onClick={handleAddToCart}
-                  className="h-11 px-6 flex items-center justify-center bg-primary text-white rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 transition-all duration-300 gap-2 font-bold text-sm tracking-wide w-full md:w-auto"
+                  className="h-11 px-6 flex items-center justify-center bg-primary text-white rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 transition-all duration-300 gap-2 font-bold text-sm tracking-wide w-full md:w-auto btn-summon relative overflow-hidden"
                 >
-                  <span>ADD TO CART</span>
+                  <div className="summon-particles"></div>
+                  {/* Summoning Circle SVG */}
+                  <svg className="circle-svg absolute inset-0 w-full h-full text-white/20" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="5,5" />
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    <path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="currentColor" strokeWidth="0.5" transform="rotate(180 50 50)" />
+                    <path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                  </svg>
+                  <span className="relative z-10">ADD TO CART</span>
                 </button>
               </>
             )}

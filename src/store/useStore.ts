@@ -38,6 +38,14 @@ interface Store {
   clearCart: () => void;
   toggleCart: () => void;
 
+  // Notification
+  notification: {
+    isOpen: boolean;
+    item: CartItem | null;
+  };
+  setNotification: (item: CartItem) => void;
+  closeNotification: () => void;
+
   // Products
   products: Product[];
   selectedCategory: string;
@@ -83,6 +91,15 @@ export const useStore = create<Store>()(
       cartItems: loadCartFromLocalStorage(),
       isCartOpen: false,
 
+      // Notification state
+      notification: {
+        isOpen: false,
+        item: null,
+      },
+
+      setNotification: (item: CartItem) => set({ notification: { isOpen: true, item } }),
+      closeNotification: () => set((state) => ({ notification: { ...state.notification, isOpen: false } })),
+
       // Cart actions
       addToCart: (product, size) => {
         const { cartItems } = get();
@@ -92,17 +109,22 @@ export const useStore = create<Store>()(
         );
 
         let updatedCartItems;
+        let itemToAdd;
+
         if (existingItem) {
           updatedCartItems = cartItems.map(item =>
             (item.id === product.id && item.selectedSize === size)
               ? { ...item, quantity: item.quantity + 1 }
               : item
           );
+          itemToAdd = { ...existingItem, quantity: existingItem.quantity + 1 };
         } else {
-          updatedCartItems = [...cartItems, { ...product, quantity: 1, selectedSize: size }];
+          itemToAdd = { ...product, quantity: 1, selectedSize: size };
+          updatedCartItems = [...cartItems, itemToAdd];
         }
 
         set({ cartItems: updatedCartItems });
+        get().setNotification(itemToAdd); // Trigger notification
         saveCartToLocalStorage(updatedCartItems);
       },
 

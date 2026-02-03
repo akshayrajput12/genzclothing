@@ -1,18 +1,42 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Lock, CreditCard, ShieldCheck, Truck, Banknote } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
-import { formatPrice } from '@/utils/currency';
+import { formatCurrency } from '@/utils/settingsHelpers';
 import { useSettings } from '@/hooks/useSettings';
-import { toNumber, formatCurrency, calculatePercentage, meetsThreshold } from '@/utils/settingsHelpers';
+import { toNumber, calculatePercentage } from '@/utils/settingsHelpers';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import ProductCard from '@/components/ProductCard';
 
 const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart } = useStore();
   const { settings, loading: settingsLoading } = useSettings();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+
+  // Fetch random recommendations
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const { data } = await supabase
+          .from('products')
+          .select('*')
+          .limit(4);
+
+        // In a real app we might randomize this, but for now taking the first 4 is fine
+        if (data) setRecommendations(data);
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+      }
+    };
+    fetchRecommendations();
+  }, []);
 
   if (settingsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7] dark:bg-[#0F0F0F]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1A1A1A] dark:border-white"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7] dark:bg-[#0B0B0F]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -22,7 +46,6 @@ const Cart = () => {
   const tax = calculatePercentage(subtotal, settings.tax_rate);
   const freeDeliveryThreshold = toNumber(settings.free_delivery_threshold);
 
-  // Logic: If threshold > 0 and subtotal >= threshold, fee is 0. Else use standard fee.
   const deliveryFee = (freeDeliveryThreshold > 0 && subtotal >= freeDeliveryThreshold)
     ? 0
     : toNumber(settings.delivery_charge);
@@ -34,208 +57,217 @@ const Cart = () => {
     ? Math.min((subtotal / freeDeliveryThreshold) * 100, 100)
     : 100;
 
-  const amountToFreeShipping = Math.max(freeDeliveryThreshold - subtotal, 0);
-
-  // Minimum Order Logic check
   const minOrderAmount = toNumber(settings.min_order_amount);
   const isMinOrderMet = subtotal >= minOrderAmount;
 
-  if (cartItems.length === 0) {
-    return (
-      <div className="min-h-screen bg-[#F8F8F8] dark:bg-[#0F0F0F] flex flex-col items-center justify-center p-6 text-center">
-        <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">shopping_bag</span>
-        <h1 className="font-display text-4xl mb-4 text-[#1A1A1A] dark:text-white">Your Bag is Empty</h1>
-        <p className="text-gray-500 font-light mb-8">It seems you haven't discovered our latest collection yet.</p>
-        <Link to="/products" className="px-8 py-4 bg-[#1A1A1A] text-white rounded-xl uppercase tracking-widest text-xs font-bold hover:shadow-lg transition-all">
-          Start Shopping
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#F8F8F8] dark:bg-[#0F0F0F] text-gray-900 dark:text-gray-100 font-sans selection:bg-[#C5A059]/30">
-      {/* Header */}
-      <header className="w-full py-24 px-6 md:px-12 flex justify-between items-end border-b border-gray-200 dark:border-gray-800">
-        <div>
-          <h1 className="font-display text-5xl md:text-6xl tracking-tight text-[#1A1A1A] dark:text-white">Shopping Bag</h1>
-          <p className="text-sm uppercase tracking-[0.2em] mt-3 text-gray-500 dark:text-gray-400 font-medium">
-            {cartItems.reduce((acc, item) => acc + item.quantity, 0).toString().padStart(2, '0')} Items Selected
-          </p>
-        </div>
-        <Link
-          to="/products"
-          className="hidden md:flex items-center gap-2 group text-sm uppercase tracking-widest font-semibold pb-1 border-b border-transparent hover:border-[#1A1A1A] dark:hover:border-white transition-all text-[#1A1A1A] dark:text-white"
-        >
-          Continue Shopping
-          <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">east</span>
-        </Link>
-      </header>
+    <div className="bg-[#F8FAFC] dark:bg-[#0B0B0F] font-spline selection:bg-primary/30 min-h-screen flex flex-col relative w-full overflow-x-hidden">
+      {/* Background Texture */}
+      <div className="fixed inset-0 manga-texture pointer-events-none z-0 opacity-10"></div>
 
-      <main className="max-w-[1400px] mx-auto p-6 md:p-12 lg:flex gap-16">
-        {/* Cart Items Section */}
-        <div className="lg:w-2/3 space-y-12">
-          {cartItems.map((item) => (
-            <div key={`${item.id}-${item.selectedSize}`} className="flex flex-col md:flex-row gap-8 pb-12 border-b border-gray-100 dark:border-gray-800 group">
-              <div className="w-full md:w-72 aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900 relative">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute top-4 left-4 bg-white/90 dark:bg-black/80 px-3 py-1 text-[10px] uppercase tracking-widest font-bold backdrop-blur-sm shadow-sm text-[#1A1A1A] dark:text-white border border-gray-100 dark:border-gray-800">
-                  In Stock
-                </div>
+      <div className="layout-container flex h-full grow flex-col relative z-10 max-w-[1440px] mx-auto w-full">
+
+        {/* Header Removed as per request */}
+
+        <main className="w-full px-6 py-12 flex flex-col gap-10">
+          {/* Page Heading */}
+          <div className="flex flex-col gap-2">
+            <h1 className="text-[#0B0B0F] dark:text-[#F8FAFC] text-6xl md:text-9xl font-bebas italic tracking-tighter leading-none">
+              SHOPPING BAG
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-24 bg-primary rounded-full"></div>
+              <p className="text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 text-lg font-medium">Ready to deploy your ninja gear?</p>
+            </div>
+          </div>
+
+          {cartItems.length === 0 ? (
+            <div className="min-h-[40vh] flex flex-col items-center justify-center text-center border-2 border-dashed border-[#0B0B0F]/10 dark:border-[#F8FAFC]/10 rounded-3xl bg-white/50 dark:bg-black/20 p-12">
+              <span className="material-symbols-outlined text-6xl text-[#0B0B0F]/20 dark:text-[#F8FAFC]/20 mb-4">shopping_bag</span>
+              <h2 className="font-bebas text-3xl text-[#0B0B0F] dark:text-[#F8FAFC] mb-2">EMPTY CART</h2>
+              <p className="text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 mb-8 max-w-md">Your inventory is currently empty. Visit the armory to restock on supplies.</p>
+              <Link to="/products" className="bg-primary hover:bg-[#0B0B0F] text-white px-8 py-4 font-bebas text-xl tracking-widest transition-colors shadow-lg shadow-primary/20">
+                VISIT ARMORY
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+              {/* Main Section: Cart Items */}
+              <div className="lg:col-span-8 flex flex-col gap-6">
+                {cartItems.map((item) => (
+                  <div key={`${item.id}-${item.selectedSize}`} className="flex flex-col md:flex-row gap-6 p-4 rounded-xl border border-[#0B0B0F]/5 dark:border-[#F8FAFC]/10 bg-white dark:bg-[#0B0B0F]/60 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="relative group">
+                      <div
+                        className="size-32 rounded-lg bg-center bg-cover border-2 border-primary/20 shadow-[0_0_15px_rgba(249,115,22,0.15)] flex items-center justify-center bg-gray-100 dark:bg-gray-800 font-bebas text-gray-400"
+                        style={{ backgroundImage: item.image ? `url('${item.image}')` : 'none' }}
+                      >
+                        {!item.image && <span>NO IMG</span>}
+                      </div>
+
+                      {/* Sharingan Icon Overlay */}
+                      <div className="absolute -top-2 -right-2 size-8 bg-white dark:bg-[#0B0B0F] rounded-full p-1 shadow-lg border border-primary/20">
+                        <span className="material-symbols-outlined text-primary text-xl animate-spin-slow">blur_circular</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-1 flex-col justify-between">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[10px] font-black tracking-widest text-[#2563EB] uppercase">
+                            {item.category || 'Gear'}
+                          </span>
+                          <h3 className="text-xl font-bold text-[#0B0B0F] dark:text-[#F8FAFC] font-display">{item.name}</h3>
+                          <p className="text-sm text-[#0B0B0F]/50 dark:text-[#F8FAFC]/50 mt-1">
+                            {item.selectedSize && `Size: ${item.selectedSize}`} {item.selectedSize && '|'} Unit Price: {formatCurrency(item.price, settings.currency_symbol)}
+                          </p>
+                        </div>
+                        <p className="text-xl font-bebas text-[#0B0B0F] dark:text-[#F8FAFC] tracking-wide">
+                          {formatCurrency(item.price * item.quantity, settings.currency_symbol)}
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-4">
+                        <div className="flex items-center bg-[#0B0B0F] dark:bg-[#F8FAFC] rounded-full p-1 text-white dark:text-[#0B0B0F]">
+                          <button
+                            onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1), item.selectedSize)}
+                            className="size-8 flex items-center justify-center hover:bg-white/10 dark:hover:bg-black/10 rounded-full transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-xs">remove</span>
+                          </button>
+                          <span className="px-4 text-xs font-bold">{item.quantity.toString().padStart(2, '0')}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
+                            className="size-8 flex items-center justify-center hover:bg-white/10 dark:hover:bg-black/10 rounded-full transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-xs">add</span>
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={() => removeFromCart(item.id, item.selectedSize)}
+                          className="text-[#0B0B0F]/40 dark:text-[#F8FAFC]/40 hover:text-red-500 dark:hover:text-red-500 transition-colors flex items-center gap-1 group/delete"
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover/delete:opacity-100 transition-opacity">Discard</span>
+                          <span className="material-symbols-outlined">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div className="flex-1 flex flex-col justify-between py-2 space-y-6">
-                <div className="flex justify-between items-start gap-4">
+              {/* Right Sidebar: Order Intel */}
+              <aside className="lg:col-span-4 flex flex-col gap-6">
+                <div className="p-8 rounded-xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl shadow-xl flex flex-col gap-6 sticky top-28">
                   <div>
-                    <h2 className="font-display text-2xl md:text-3xl mb-2 text-[#1A1A1A] dark:text-white leading-tight">{item.name}</h2>
-                    <div className="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
-                      {item.selectedSize && (
-                        <span className="flex items-center gap-1">
-                          <span className="font-semibold uppercase text-xs tracking-tighter text-gray-400">Size</span>
-                          <span className="font-medium text-gray-900 dark:text-white">{item.selectedSize}</span>
-                        </span>
-                      )}
-                      {item.selectedSize && <span className="w-1 h-1 rounded-full bg-gray-300"></span>}
-                      <span className="flex items-center gap-1">
-                        <span className="font-semibold uppercase text-xs tracking-tighter text-gray-400">Weight</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{item.weight}</span>
+                    <h2 className="text-2xl font-bebas tracking-wider text-[#0B0B0F] dark:text-[#F8FAFC]">ORDER INTEL</h2>
+                    <p className="text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 text-sm mt-1">Summary of your shinobi mission assets.</p>
+                  </div>
+
+                  <div className="flex flex-col gap-4 py-6 border-y border-[#0B0B0F]/5 dark:border-[#F8FAFC]/5">
+                    <div className="flex justify-between text-sm font-medium">
+                      <span className="text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60">Subtotal</span>
+                      <span className="text-[#0B0B0F] dark:text-[#F8FAFC] font-sans">{formatCurrency(subtotal, settings.currency_symbol)}</span>
+                    </div>
+                    {tax > 0 && (
+                      <div className="flex justify-between text-sm font-medium">
+                        <span className="text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60">Tax ({settings.tax_rate}%)</span>
+                        <span className="text-[#0B0B0F] dark:text-[#F8FAFC] font-sans">{formatCurrency(tax, settings.currency_symbol)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-sm font-medium">
+                      <span className="text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60">Estimated Shipping</span>
+                      <span className={`font-bold ${deliveryFee === 0 ? 'text-[#2563EB]' : 'text-[#0B0B0F] dark:text-[#F8FAFC]'}`}>
+                        {deliveryFee === 0 ? 'COMPLIMENTARY' : formatCurrency(deliveryFee, settings.currency_symbol)}
                       </span>
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <span className="font-mono text-xl md:text-2xl font-light block text-[#1A1A1A] dark:text-white">
-                      {formatCurrency(item.price * item.quantity, settings.currency_symbol)}
-                    </span>
-                    <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">
-                      {formatCurrency(item.price, settings.currency_symbol)} / unit
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex items-end justify-between mt-auto">
-                  <div className="flex items-center bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 rounded-full p-1 shadow-sm">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}
-                      className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors text-gray-600 dark:text-gray-300"
-                    >
-                      <span className="material-symbols-outlined text-lg">remove</span>
-                    </button>
-                    <span className="w-12 text-center font-mono font-medium text-[#1A1A1A] dark:text-white">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
-                      className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors text-gray-600 dark:text-gray-300"
-                    >
-                      <span className="material-symbols-outlined text-lg">add</span>
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => removeFromCart(item.id, item.selectedSize)}
-                    className="flex items-center gap-2 text-xs uppercase tracking-widest text-red-400 hover:text-red-500 font-bold transition-colors group/remove"
-                  >
-                    <span className="material-symbols-outlined text-sm transition-transform group-hover/remove:rotate-90">close</span>
-                    Remove
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Sidebar Summary */}
-        <aside className="lg:w-1/3 mt-16 lg:mt-0">
-          <div className="bg-white/70 dark:bg-[#1E1E1E]/60 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-2xl p-8 sticky top-24 shadow-sm">
-            <h3 className="font-display text-2xl mb-8 text-[#1A1A1A] dark:text-white">Order Summary</h3>
-
-            {/* Free Shipping Progress */}
-            {freeDeliveryThreshold > 0 && (
-              <div className="mb-10 p-5 bg-[#C5A059]/5 dark:bg-[#C5A059]/10 rounded-xl border border-[#C5A059]/20">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#C5A059]">
-                    {progress === 100 ? 'Free Shipping Unlocked' : 'Free Shipping'}
-                  </span>
-                  {amountToFreeShipping > 0 && (
-                    <span className="text-[10px] font-mono text-[#C5A059]">{formatCurrency(amountToFreeShipping, settings.currency_symbol)} to go</span>
+                  {/* Free Shipping Progress */}
+                  {freeDeliveryThreshold > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <div className="flex justify-between items-end">
+                        <p className="text-[#0B0B0F] dark:text-[#F8FAFC] text-xs font-black uppercase tracking-widest">Free Shipping Progress</p>
+                        <p className="text-primary text-xs font-black font-sans">{formatCurrency(subtotal, settings.currency_symbol)} / {formatCurrency(freeDeliveryThreshold, settings.currency_symbol)}</p>
+                      </div>
+                      <div className="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${progress}%` }}></div>
+                      </div>
+                      {progress >= 100 && (
+                        <p className="text-[#2563EB] text-[10px] font-bold uppercase flex items-center gap-1 animate-pulse">
+                          <span className="material-symbols-outlined text-xs">verified</span> Mission Requirement Met
+                        </p>
+                      )}
+                    </div>
                   )}
+
+                  {!isMinOrderMet && (
+                    <div className="p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded text-center">
+                      <p className="text-xs text-red-600 font-bold uppercase tracking-wide">
+                        Minimum Order Required: {formatCurrency(minOrderAmount, settings.currency_symbol)}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-[#0B0B0F] dark:text-[#F8FAFC] font-bebas text-2xl">TOTAL</span>
+                    <span className="text-[#0B0B0F] dark:text-[#F8FAFC] font-bebas text-4xl">{formatCurrency(total, settings.currency_symbol)}</span>
+                  </div>
+
+                  {/* Proceed to Checkout Button */}
+                  <button
+                    disabled={!isMinOrderMet}
+                    onClick={() => navigate('/checkout')}
+                    className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-5 flex items-center justify-center gap-3 transition-transform active:scale-95 shadow-lg shadow-primary/25 group disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                  >
+                    <span className="font-bebas text-2xl tracking-widest leading-none pt-1">PROCEED TO CHECKOUT</span>
+                    <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">lock</span>
+                  </button>
+
+                  <div className="flex flex-col gap-4 mt-2">
+                    <p className="text-center text-[10px] font-bold text-[#0B0B0F]/30 dark:text-[#F8FAFC]/30 tracking-widest uppercase">
+                      Secure Transmission Guaranteed
+                    </p>
+                    <div className="flex justify-center gap-4 text-[#0B0B0F]/20 dark:text-[#F8FAFC]/20">
+                      <span className="material-symbols-outlined">payments</span>
+                      <span className="material-symbols-outlined">credit_card</span>
+                      <span className="material-symbols-outlined">account_balance_wallet</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-[#C5A059] to-[#E2D1B3]"
-                    style={{ width: `${progress}%` }}
-                  ></div>
+
+                {/* Additional Promo/Help */}
+                <div className="p-6 rounded-xl border border-dashed border-[#0B0B0F]/20 dark:border-[#F8FAFC]/20 flex flex-col gap-2 bg-transparent">
+                  <p className="text-[#0B0B0F] dark:text-[#F8FAFC] font-bold text-sm">Need Tactical Support?</p>
+                  <p className="text-[#0B0B0F]/50 dark:text-[#F8FAFC]/50 text-xs">Contact the village elders for assistance with your deployment gear.</p>
+                  <Link to="/contact" className="text-primary text-xs font-black uppercase tracking-widest mt-2 flex items-center gap-1 group">
+                    Open Scroll Support <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </Link>
                 </div>
-                <p className="text-[11px] mt-3 text-gray-500 dark:text-gray-400 italic">
-                  {amountToFreeShipping > 0
-                    ? `Add more items for complimentary shipping`
-                    : 'You are eligible for complimentary shipping'
-                  }
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-widest">Subtotal</span>
-                <span className="font-mono text-[#1A1A1A] dark:text-white">{formatCurrency(subtotal, settings.currency_symbol)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-widest">Taxes</span>
-                <span className="font-mono text-[#1A1A1A] dark:text-white">{formatCurrency(tax, settings.currency_symbol)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-widest">Shipping</span>
-                <span className={`text-xs font-bold uppercase tracking-widest ${deliveryFee === 0 ? 'text-green-600 dark:text-green-400' : 'text-[#1A1A1A] dark:text-white'}`}>
-                  {deliveryFee === 0 ? 'Complimentary' : formatCurrency(deliveryFee, settings.currency_symbol)}
-                </span>
-              </div>
-              {!isMinOrderMet && (
-                <div className="text-xs text-red-500 mt-2 p-2 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded text-center">
-                  Minimum order: {formatCurrency(minOrderAmount, settings.currency_symbol)} required
-                </div>
-              )}
+              </aside>
             </div>
+          )}
 
-            <div className="pt-8 border-t border-gray-200 dark:border-gray-700 flex justify-between items-end mb-10">
-              <div>
-                <span className="block text-xs uppercase tracking-widest font-bold text-gray-400">Total Due</span>
-                <span className="text-4xl font-display mt-1 text-[#1A1A1A] dark:text-white">{formatCurrency(total, settings.currency_symbol)}</span>
+          {/* Recently Viewed / Recommendations */}
+          {recommendations.length > 0 && (
+            <section className="mt-12 flex flex-col gap-8">
+              <h2 className="text-3xl font-bebas tracking-wide text-[#0B0B0F] dark:text-[#F8FAFC]">ESSENTIAL ADD-ONS</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {recommendations.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onViewDetail={() => navigate(`/product/${product.slug || product.id}`)}
+                  />
+                ))}
               </div>
-              {/* <span className="text-[10px] text-gray-400 uppercase tracking-tighter">Calculated at checkout</span> */}
-            </div>
+            </section>
+          )}
 
-            <div className="space-y-4">
-              <button
-                disabled={!isMinOrderMet}
-                onClick={() => window.location.href = '/checkout'}
-                className="w-full bg-[#1A1A1A] hover:bg-black dark:bg-white dark:text-[#1A1A1A] dark:hover:bg-gray-200 text-white py-6 rounded-xl font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(0,0,0,0.1)] hover:shadow-[0_0_30px_rgba(197,160,89,0.3)] hover:-translate-y-[1px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isMinOrderMet ? 'Proceed to Checkout' : 'Add More Items'}
-                <span className="material-symbols-outlined text-sm">lock</span>
-              </button>
-            </div>
+        </main>
 
-            <div className="mt-8 flex justify-center gap-6 opacity-40 grayscale contrast-125 dark:invert">
-              <span className="material-symbols-outlined text-2xl" title="Secure Payment"><ShieldCheck className="w-6 h-6" /></span>
-              <span className="material-symbols-outlined text-2xl" title="Fast Shipping"><Truck className="w-6 h-6" /></span>
-              <span className="material-symbols-outlined text-2xl" title="Currency"><Banknote className="w-6 h-6" /></span>
-            </div>
-          </div>
-
-          <div className="mt-6 px-4">
-            <button className="w-full flex justify-between items-center py-4 border-b border-gray-100 dark:border-gray-800 group text-[#1A1A1A] dark:text-white">
-              <span className="text-xs uppercase tracking-widest font-semibold group-hover:text-[#C5A059] transition-colors">Add a Promotion Code</span>
-              <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
-            </button>
-          </div>
-        </aside>
-      </main>
-
-      <footer className="mt-24 pb-12 text-center text-[10px] uppercase tracking-[0.3em] text-gray-400 dark:text-gray-600">
-        © 2024 Paridhan Haat • All Rights Reserved
-      </footer>
+        {/* Footer Removed as per request */}
+      </div>
     </div>
   );
 };

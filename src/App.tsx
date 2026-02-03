@@ -1,4 +1,33 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import ShinobiToast from '@/components/ShinobiToast';
+
+// ... (existing imports, but typically handle import at the top in replace_file_content by using multiple chunks if possible, or assume user context handles top imports if using `replace_file_content` with small chunks)
+// Wait, for replace_file_content I need to be precise. 
+// I will just look for where imports end and insert the import, and where the render ends and insert the component.
+// But `replace_file_content` doesn't support multiple chunks in the same call (wait, `multi_replace_file_content` exists!). 
+// I'll stick to `replace_file_content` since I haven't seen the `multi` tool used much by me yet/I prefer simple edits.
+// I will do two edits: one for import, one for component.
+// Actually, `default_api:replace_file_content` docs say:
+// "Use this tool ONLY when you are making a SINGLE CONTIGUOUS block of edits"
+// So I will use `multi_replace_file_content` or two calls. 
+// Let's use two `replace_file_content` calls sequence? 
+// The system says "Do NOT make multiple parallel calls to this tool".
+// I'll use `multi_replace_file_content`.
+
+// Wait, I see `multi_replace_file_content` in the tool definition. Let's use that.
+// First, view App.tsx again to get exact lines? I have the file content from Step 119.
+
+// Import at top:
+// Line 14: import Preloader...
+// I'll add ShinobiToast there.
+
+// Component at bottom:
+// Line 155: ... <FloatingWhatsApp />
+// I'll add <ShinobiToast /> there.
+
+// I will use `replace_file_content` for the Component first, then Import. Or just one edit if possible? No, they are far apart.
+// I'll use `multi_replace_file_content`.
+
 import { useAuth } from '@/contexts/AuthContext';
 import ScrollToTop from '@/components/ScrollToTop';
 import Header from '@/components/Header';
@@ -153,6 +182,7 @@ const AppContent = () => {
           {!isAuthPage && !isProfilePage && !isOrderDetailPage && <Footer isAdminRoute={isAdminRoute} />}
           {!isAuthPage && !isProfilePage && !isOrderDetailPage && <CartSidebar isAdminRoute={isAdminRoute} />}
           {!isAuthPage && !isProfilePage && !isOrderDetailPage && <FloatingWhatsApp />}
+          <ShinobiToast />
           <FloatingProductCard />
           <Toaster />
           <Sonner />

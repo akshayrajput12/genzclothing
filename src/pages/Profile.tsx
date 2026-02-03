@@ -133,295 +133,254 @@ export default function Profile() {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="flex min-h-screen main-gradient font-sans-custom text-[#1b0d13] dark:text-white relative items-start">
+    <div className="bg-[#F8FAFC] dark:bg-[#0B0B0F] font-display min-h-screen text-[#0B0B0F] dark:text-[#F8FAFC] overflow-x-hidden relative">
+      {/* Subtle manga line overlay */}
+      <div className="fixed inset-0 manga-texture pointer-events-none z-0"></div>
 
-      {/* Mobile Header / Sidebar Toggle */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between glass-sidebar h-16 shadow-sm">
-        <button onClick={toggleSidebar} className="p-2 -ml-2 text-primary">
-          <span className="material-symbols-outlined text-2xl">menu</span>
-        </button>
-        <span className="font-display font-bold text-lg">My Account</span>
-        <div className="w-8"></div> {/* Spacer for balance */}
-      </div>
-
-      {/* Sidebar Overlay for Mobile */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
-          onClick={() => setIsSidebarOpen(false)}
-        ></div>
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed md:sticky top-0 md:top-0 h-full md:h-screen w-[280px] md:w-80 flex-shrink-0 z-50 md:z-auto transition-transform duration-300 ease-in-out glass-sidebar
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-      >
-        <div className="flex flex-col h-full p-6 md:p-8">
-
-          {/* Back to Home (Desktop) */}
-          <button
-            onClick={() => navigate('/')}
-            className="hidden md:flex items-center gap-2 text-sm font-medium text-primary mb-8 opacity-70 hover:opacity-100 transition-opacity"
-          >
-            <span className="material-symbols-outlined text-lg">arrow_back</span>
-            Back to Home
-          </button>
-
-          {/* Back to Home (Mobile) */}
-          <button
-            onClick={() => navigate('/')}
-            className="flex md:hidden items-center gap-2 text-sm font-medium text-primary mb-8 opacity-70 hover:opacity-100 transition-opacity mt-4"
-          >
-            <span className="material-symbols-outlined text-lg">arrow_back</span>
-            Home
-          </button>
-
-          {/* User Profile Intro */}
-          <div className="flex items-center gap-4 mb-10">
-            <div className="flex flex-col">
-              <h1 className="font-display font-bold text-lg tracking-tight">Welcome,</h1>
-              <p className="text-primary/90 text-sm font-bold">{profile?.full_name?.split(' ')[0] || 'Member'}</p>
+      <div className="flex min-h-screen relative z-10">
+        {/* Sidebar Navigation */}
+        <aside
+          className={`
+            fixed top-0 left-0 h-full bg-[#F8FAFC] dark:bg-[#0B0B0F] border-r border-[#0B0B0F]/10 dark:border-[#F8FAFC]/10 
+            flex flex-col justify-between p-8 w-72 z-50 transition-transform duration-300 ease-in-out
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          `}
+        >
+          <div className="flex flex-col gap-12">
+            <div className="flex flex-col cursor-pointer" onClick={() => navigate('/')}>
+              <h1 className="font-bebas text-4xl tracking-widest text-primary">OBITO</h1>
+              <p className="text-xs uppercase tracking-[0.2em] font-bold text-[#0B0B0F]/40 dark:text-[#F8FAFC]/40">Member Profile Hub</p>
             </div>
+
+            <nav className="flex flex-col gap-6">
+              <button
+                onClick={() => { setActiveTab('profile'); setIsSidebarOpen(false); }}
+                className={`flex items-center gap-4 group text-left ${activeTab === 'profile' ? '' : 'text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 hover:text-[#0B0B0F] dark:hover:text-[#F8FAFC]'}`}
+              >
+                <span className={`material-symbols-outlined fill-1 ${activeTab === 'profile' ? 'text-primary' : 'group-hover:text-primary transition-colors'}`}>
+                  account_circle
+                </span>
+                <span className={`font-bebas text-2xl tracking-wider ${activeTab === 'profile' ? 'text-primary active-glow' : 'group-hover:text-primary transition-colors'}`}>
+                  PROFILE
+                </span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab('orders'); setIsSidebarOpen(false); }}
+                className={`flex items-center gap-4 group text-left ${activeTab === 'orders' ? '' : 'text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 hover:text-[#0B0B0F] dark:hover:text-[#F8FAFC]'}`}
+              >
+                <span className={`material-symbols-outlined fill-1 ${activeTab === 'orders' ? 'text-primary' : 'group-hover:text-primary transition-colors'}`}>
+                  package_2
+                </span>
+                <span className={`font-bebas text-2xl tracking-wider ${activeTab === 'orders' ? 'text-primary active-glow' : 'group-hover:text-primary transition-colors'}`}>
+                  ORDERS
+                </span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab('addresses'); setIsSidebarOpen(false); }}
+                className={`flex items-center gap-4 group text-left ${activeTab === 'addresses' ? '' : 'text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 hover:text-[#0B0B0F] dark:hover:text-[#F8FAFC]'}`}
+              >
+                <span className={`material-symbols-outlined fill-1 ${activeTab === 'addresses' ? 'text-primary' : 'group-hover:text-primary transition-colors'}`}>
+                  location_on
+                </span>
+                <span className={`font-bebas text-2xl tracking-wider ${activeTab === 'addresses' ? 'text-primary active-glow' : 'group-hover:text-primary transition-colors'}`}>
+                  ADDRESSES
+                </span>
+              </button>
+            </nav>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="flex flex-col gap-2 flex-grow">
-            {[
-              { id: 'profile', icon: 'person', label: 'Profile' },
-              { id: 'orders', icon: 'local_mall', label: 'Orders' },
-              { id: 'addresses', icon: 'location_on', label: 'Addresses' },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 group ${activeTab === item.id
-                  ? 'bg-white/90 dark:bg-white/10 shadow-lg shadow-black/5 border border-white/50'
-                  : 'hover:bg-white/40 dark:hover:bg-white/5'
-                  }`}
-              >
-                <span className={`material-symbols-outlined text-[20px] transition-colors ${activeTab === item.id ? 'text-primary' : 'text-gray-500 dark:text-gray-400 group-hover:text-primary'
-                  }`}>
-                  {item.icon}
-                </span>
-                <p className={`text-sm font-bold tracking-wide transition-colors ${activeTab === item.id ? 'text-[#1b0d13] dark:text-white' : 'text-gray-600 dark:text-gray-300'
-                  }`}>
-                  {item.label}
-                </p>
-              </button>
-            ))}
-          </nav>
-
-          {/* Bottom Action */}
           <button
             onClick={handleSignOut}
-            className="flex w-full cursor-pointer items-center justify-center rounded-xl h-12 px-4 bg-white/40 dark:bg-white/5 hover:bg-red-50 dark:hover:bg-red-900/10 text-[#1b0d13] dark:text-white text-sm font-bold border border-white/20 transition-all mt-6 md:mt-0 hover:border-red-200 group"
+            className="flex items-center justify-center gap-2 border-2 border-[#0B0B0F] dark:border-[#F8FAFC] px-6 py-3 font-bebas text-xl tracking-wider hover:bg-[#0B0B0F] dark:hover:bg-[#F8FAFC] hover:text-white dark:hover:text-[#0B0B0F] transition-all"
           >
-            <span className="material-symbols-outlined mr-2 text-gray-500 group-hover:text-red-500 text-[20px] transition-colors">logout</span>
-            <span className="truncate group-hover:text-red-600 transition-colors">Logout</span>
+            <span className="material-symbols-outlined text-lg">logout</span>
+            LOG OUT
           </button>
+        </aside>
+
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+            onClick={() => setIsSidebarOpen(false)}
+          ></div>
+        )}
+
+        {/* Mobile Header Toggle */}
+        <div className="md:hidden fixed top-0 left-0 right-0 z-30 p-4 flex items-center justify-between bg-[#F8FAFC]/90 dark:bg-[#0B0B0F]/90 backdrop-blur-md border-b border-[#0B0B0F]/10">
+          <button onClick={toggleSidebar} className="text-primary">
+            <span className="material-symbols-outlined text-3xl">menu</span>
+          </button>
+          <span className="font-bebas text-2xl tracking-wider">MY ACCOUNT</span>
+          <div className="w-8"></div>
         </div>
-      </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full px-4 py-20 md:py-12 md:px-12 h-screen overflow-y-auto">
-        <div className="max-w-4xl mx-auto pb-20">
-
-          {/* Page Heading (Desktop only, mobile has header) */}
-          <div className="hidden md:flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
-            <div className="max-w-xl">
-              <h2 className="font-display text-[#1b0d13] dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-tight mb-2">
-                My Account
-              </h2>
-            </div>
-            <div className="text-right">
-              <span className="block text-[10px] font-bold uppercase tracking-widest text-[#9a4c6c]/60 mb-1">
-                Member ID
-              </span>
-              <span className="font-mono text-xs opacity-50">{user?.id?.substring(0, 8).toUpperCase()}</span>
-            </div>
+        {/* Main Content */}
+        <main className="md:ml-72 flex-1 p-6 md:p-16 max-w-6xl w-full pt-20 md:pt-16">
+          {/* Page Heading */}
+          <div className="mb-12">
+            <h1 className="font-bebas text-6xl md:text-9xl italic leading-none text-[#0B0B0F] dark:text-[#F8FAFC] tracking-tighter">
+              MY ACCOUNT
+            </h1>
+            <p className="text-lg text-[#0B0B0F]/60 dark:text-[#F8FAFC]/60 mt-4 max-w-xl">
+              Manage your credentials, track active missions, and update your shipping location.
+            </p>
           </div>
 
-          {/* Content Card with Darker Glassmorphism */}
-          <div className="glass-card rounded-[2rem] shadow-2xl shadow-black/5 p-6 md:p-10 relative overflow-hidden min-h-[500px]">
-
-            {/* PROFILE TAB CONTENT */}
-            {activeTab === 'profile' && (
-              <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                {/* Simplified Profile Header */}
-                <div className="flex flex-col items-center justify-center text-center mb-10">
-                  <h3 className="font-display text-[#1b0d13] dark:text-white text-2xl font-bold mb-1">
-                    {profile?.full_name || 'User'}
-                  </h3>
-                  <p className="text-[#9a4c6c] dark:text-primary/70 text-sm font-medium">{user?.email}</p>
+          {/* Profile Content */}
+          {activeTab === 'profile' && (
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
+              <div className="space-y-8 max-w-3xl">
+                <div className="border-b border-[#0B0B0F]/10 dark:border-[#F8FAFC]/10 pb-4">
+                  <h2 className="font-bebas text-4xl tracking-wide">SHINOBI DATA</h2>
                 </div>
 
-                <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent w-full mb-10"></div>
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Full Name */}
+                  <label className="flex flex-col gap-2">
+                    <span className="text-xs font-black uppercase tracking-widest text-[#0B0B0F]/50 dark:text-[#F8FAFC]/50">Full Name</span>
+                    <input
+                      className="bg-transparent border-2 border-[#0B0B0F] dark:border-[#F8FAFC] p-4 font-medium focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-[#0B0B0F]/30 dark:placeholder:text-[#F8FAFC]/30"
+                      placeholder="Enter your name"
+                      type="text"
+                      value={profileData.full_name}
+                      onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
+                    />
+                  </label>
 
-                <div className="space-y-6 max-w-2xl mx-auto">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[#1b0d13]/60 dark:text-white/60 text-[10px] font-bold uppercase tracking-widest pl-1">Full Name</label>
-                      <input
-                        className="w-full rounded-xl border-none bg-white/60 dark:bg-black/20 focus:bg-white focus:ring-2 focus:ring-primary/20 h-14 px-5 text-base transition-all shadow-sm"
-                        type="text"
-                        value={profileData.full_name}
-                        onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[#1b0d13]/60 dark:text-white/60 text-[10px] font-bold uppercase tracking-widest pl-1">Email Address</label>
-                      <input
-                        disabled
-                        className="w-full rounded-xl border-none bg-white/30 dark:bg-black/10 h-14 px-5 text-base transition-all shadow-sm opacity-60 cursor-not-allowed"
-                        type="email"
-                        value={user?.email || ''}
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-[#1b0d13]/60 dark:text-white/60 text-[10px] font-bold uppercase tracking-widest pl-1">Phone Number</label>
-                      <input
-                        className="w-full rounded-xl border-none bg-white/60 dark:bg-black/20 focus:bg-white focus:ring-2 focus:ring-primary/20 h-14 px-5 text-base transition-all shadow-sm"
-                        type="tel"
-                        value={profileData.phone}
-                        onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                        placeholder="+91"
-                      />
-                    </div>
-                  </div>
+                  {/* Email */}
+                  <label className="flex flex-col gap-2">
+                    <span className="text-xs font-black uppercase tracking-widest text-[#0B0B0F]/50 dark:text-[#F8FAFC]/50">Email Address</span>
+                    <input
+                      className="bg-transparent border-2 border-[#0B0B0F] dark:border-[#F8FAFC] p-4 font-medium opacity-60 cursor-not-allowed"
+                      type="email"
+                      value={user?.email || ''}
+                      disabled
+                    />
+                  </label>
 
-                  <div className="pt-6 flex flex-col items-center gap-4">
-                    <button
-                      onClick={updateProfile}
-                      disabled={loading}
-                      className="w-full md:w-auto min-w-[200px] h-14 bg-[#1b0d13] dark:bg-white hover:bg-primary text-white dark:text-[#1b0d13] dark:hover:text-white rounded-xl text-base font-bold shadow-xl shadow-black/10 hover:shadow-primary/30 hover:scale-[1.02] transition-all disabled:opacity-70 disabled:hover:scale-100"
-                    >
-                      {loading ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Saving
-                        </span>
-                      ) : 'Save Changes'}
-                    </button>
-                    <button
-                      className="text-[#9a4c6c] text-xs font-bold hover:underline opacity-70 hover:opacity-100 transition-opacity"
-                      onClick={() => {
-                        setProfileData({
-                          full_name: profile?.full_name || '',
-                          phone: profile?.phone || '',
-                        });
-                      }}
-                    >
-                      Discard changes
-                    </button>
-                  </div>
+                  {/* Phone */}
+                  <label className="flex flex-col gap-2">
+                    <span className="text-xs font-black uppercase tracking-widest text-[#0B0B0F]/50 dark:text-[#F8FAFC]/50">Phone Number</span>
+                    <input
+                      className="bg-transparent border-2 border-[#0B0B0F] dark:border-[#F8FAFC] p-4 font-medium focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-[#0B0B0F]/30 dark:placeholder:text-[#F8FAFC]/30"
+                      placeholder="+91"
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    />
+                  </label>
                 </div>
+
+                <button
+                  onClick={updateProfile}
+                  disabled={loading}
+                  className="bg-primary text-white font-bebas text-2xl tracking-widest px-10 py-4 shadow-[4px_4px_0px_0px_rgba(11,11,15,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all disabled:opacity-70 disabled:hover:shadow-[4px_4px_0px_0px_rgba(11,11,15,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+                >
+                  {loading ? 'SAVING...' : 'SAVE CHANGES'}
+                </button>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ORDERS TAB CONTENT */}
-            {activeTab === 'orders' && (
-              <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="font-display text-[#1b0d13] dark:text-white text-2xl font-bold">Recent Orders</h3>
-                  {orders.length > 0 && (
-                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">
-                      {orders.length} orders
-                    </span>
-                  )}
+          {/* Orders Content */}
+          {activeTab === 'orders' && (
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
+              <div className="space-y-8">
+                <div className="border-b border-[#0B0B0F]/10 dark:border-[#F8FAFC]/10 pb-4 flex justify-between items-end">
+                  <h2 className="font-bebas text-4xl tracking-wide">ACTIVE MISSIONS</h2>
+                  <span className="text-xs font-bold text-primary underline cursor-pointer">{orders.length} TOTAL</span>
                 </div>
 
                 {orders.length === 0 ? (
-                  <div className="text-center py-20 flex flex-col items-center justify-center border-2 border-dashed border-primary/10 rounded-3xl bg-white/20">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/5">
-                      <span className="material-symbols-outlined text-primary/40 text-3xl">shopping_bag</span>
-                    </div>
-                    <h3 className="font-display text-lg mb-2 font-bold text-primary/80">No orders yet</h3>
-                    <p className="text-[#9a4c6c] text-sm mb-6 max-w-xs mx-auto">Your collection is waiting for you.</p>
-                    <button onClick={() => navigate('/products')} className="px-6 py-3 bg-primary text-white rounded-xl shadow-lg hover:bg-[#1b0d13] hover:scale-[1.02] transition-all font-bold text-xs uppercase tracking-widest">
-                      Start Shopping
-                    </button>
+                  <div className="text-center py-20 border-2 border-dashed border-[#0B0B0F]/20 dark:border-[#F8FAFC]/20">
+                    <p className="font-bebas text-2xl text-[#0B0B0F]/40 dark:text-[#F8FAFC]/40">No active missions found</p>
+                    <button onClick={() => navigate('/products')} className="mt-4 text-primary font-bold hover:underline">START SHOPPING</button>
                   </div>
                 ) : (
-                  <div className="grid gap-4">
+                  <div className="space-y-6">
                     {orders.map((order: any) => {
                       const productImage = getProductImage(order.items);
+                      const productName = getProductNames(order.items);
+
                       return (
-                        <div key={order.id} className="group bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-2xl p-4 transition-all hover:bg-white hover:shadow-xl hover:shadow-primary/5 hover:scale-[1.01] overflow-hidden relative">
-                          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                            {/* Product Image */}
-                            <div className="w-full sm:w-24 h-32 sm:h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden relative">
-                              {productImage ? (
-                                <img src={productImage} alt="Product" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/20">
-                                  <span className="material-symbols-outlined text-2xl">checkroom</span>
-                                </div>
-                              )}
-                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                        <div key={order.id} className="bg-white dark:bg-[#0B0B0F] border-2 border-[#0B0B0F] dark:border-[#F8FAFC] p-4 flex gap-4 relative group hover:bg-[#F8FAFC] dark:hover:bg-[#1a1a20] transition-colors">
+                          {/* Image */}
+                          <div className="w-24 h-24 bg-primary/10 flex-shrink-0 geometric-crop overflow-hidden">
+                            {productImage ? (
+                              <img
+                                src={productImage}
+                                alt="Product"
+                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-primary/40">
+                                <span className="material-symbols-outlined">checkroom</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Details */}
+                          <div className="flex flex-col justify-between py-1 flex-1">
+                            <div>
+                              <p className="font-bebas text-xl md:text-2xl tracking-wide leading-tight dark:text-[#F8FAFC] line-clamp-1">{productName}</p>
+                              <p className="text-xs text-[#0B0B0F]/40 dark:text-[#F8FAFC]/40 font-bold uppercase tracking-tighter mt-1">
+                                Order #{order.order_number?.slice(-6) || order.id.slice(0, 8)}
+                              </p>
                             </div>
 
-                            {/* Order Info */}
-                            <div className="flex-1 flex flex-col justify-center py-1">
-                              <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="bg-black text-white px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-widest font-mono">
-                                    #{order.order_number?.slice(-6)}
-                                  </span>
-                                  <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-widest border
-                                           ${order.order_status === 'delivered' ? 'bg-green-50/50 border-green-200 text-green-700' :
-                                      order.order_status === 'processing' ? 'bg-blue-50/50 border-blue-200 text-blue-700' :
-                                        'bg-gray-50/50 border-gray-200 text-gray-600'}`}>
-                                    {order.order_status}
-                                  </span>
-                                </div>
-                                <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">
-                                  {new Date(order.created_at).toLocaleDateString(undefined, { year: '2-digit', month: 'short', day: 'numeric' })}
-                                </span>
-                              </div>
+                            <div className="flex justify-between items-end w-full">
+                              <span className={`inline-flex items-center px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm w-fit
+                                  ${order.order_status === 'delivered' ? 'bg-green-100 text-green-700' :
+                                  order.order_status === 'processing' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}
+                                `}>
+                                {order.order_status}
+                              </span>
 
-                              <h4 className="font-display font-bold text-base mb-1 line-clamp-1">{getProductNames(order.items)}</h4>
-
-                              <div className="mt-auto flex items-end justify-between pt-2">
-                                <div>
-                                  <p className="font-display font-bold text-lg text-primary">₹{order.total?.toLocaleString('en-IN')}</p>
-                                </div>
-                                <button
-                                  onClick={() => window.open(`/order-detail/${order.id}`, '_blank')}
-                                  className="h-9 w-9 rounded-full bg-white border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all transform group-hover:rotate-45 shadow-sm"
-                                >
-                                  <span className="material-symbols-outlined text-lg">arrow_outward</span>
-                                </button>
-                              </div>
+                              <p className="font-bebas text-xl text-primary">₹{order.total?.toLocaleString('en-IN')}</p>
                             </div>
                           </div>
+
+                          {/* View Button Overlay (Desktop) */}
+                          <button
+                            onClick={() => window.open(`/order-detail/${order.id}`, '_blank')}
+                            className="absolute top-4 right-4 md:opacity-0 group-hover:opacity-100 transition-opacity p-2 text-primary hover:text-[#0B0B0F] dark:hover:text-[#F8FAFC]"
+                          >
+                            <span className="material-symbols-outlined">open_in_new</span>
+                          </button>
                         </div>
                       );
                     })}
                   </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ADDRESSES TAB CONTENT */}
-            {activeTab === 'addresses' && (
-              <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <h3 className="font-display text-[#1b0d13] dark:text-white text-2xl font-bold mb-8">Shipping Addresses</h3>
+          {/* Addresses Content */}
+          {activeTab === 'addresses' && (
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
+              <div className="border-b border-[#0B0B0F]/10 dark:border-[#F8FAFC]/10 pb-4 mb-8">
+                <h2 className="font-bebas text-4xl tracking-wide">SHIPPING LOCATIONS</h2>
+              </div>
+              {/* Wrapped AddressManager to inherit styles somewhat or leave as is if it's complex */}
+              <div className="[&_h3]:font-bebas [&_h3]:text-2xl [&_button]:font-bebas [&_button]:tracking-wider">
                 <AddressManager />
               </div>
-            )}
-
-            {/* Aesthetic Watermark Decor */}
-            <div className="absolute -bottom-20 -right-20 opacity-[0.03] pointer-events-none select-none">
-              <span className="font-display text-[150px] md:text-[200px] font-black italic tracking-tighter">PH</span>
             </div>
-          </div>
-        </div>
-      </main>
+          )}
+
+        </main>
+      </div>
+
+      {/* Decorative Corner Element */}
+      <div className="fixed bottom-0 right-0 p-8 pointer-events-none opacity-10 z-0 hidden md:block">
+        <h2 className="font-bebas text-[12rem] leading-none text-[#0B0B0F] dark:text-[#F8FAFC] select-none">
+          {activeTab === 'profile' ? 'PROFILE' : activeTab === 'orders' ? 'ORDERS' : 'LOCATIONS'}
+        </h2>
+      </div>
     </div>
   );
 }

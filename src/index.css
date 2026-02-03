@@ -11,6 +11,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;900&family=Noto+Sans:wght@400;500;700&display=swap');
 
 
@@ -358,4 +359,148 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Profile Page Ref Styles */
+.manga-texture {
+  background-image: radial-gradient(#000 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+  opacity: 0.05;
+}
+
+.dark .manga-texture {
+  background-image: radial-gradient(#fff 0.5px, transparent 0.5px);
+}
+
+.active-glow {
+  text-shadow: 0 0 10px rgba(249, 116, 22, 0.4);
+}
+
+.geometric-crop {
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+}
+
+.grain-texture {
+  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAb5kTrXIuEXtacKet2hEicdjcYchHqpao2tyPXCOOaSf7CYyV4-momn5pMEaOrjm5xug8uFOkSlwoN9-xfzzJpO2UHmqA4yvxAMUDM5CPdyoz6TU3kUt1Tq-P89325bHZdi2P3Td5zd3ObHlicbHUI_GXkfQaznbjAe9SjV08h0ohI05Gg-ZM9vT0i18H0LW3xDWfVqH8mhm4lgTw2yqIj7fALsDLyrsGGBVCiXY3GykTA0JEIXyaylU7eRnYFvNRiAMew-r82T9by);
+}
+
+.chakra-glow {
+  box-shadow: 0 0 15px rgba(249, 116, 21, 0.2);
+}
+
+/* Summoning Circle Animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+.summoning-circle {
+  position: relative;
+  overflow: hidden;
+}
+
+.summoning-circle::before,
+.summoning-circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.summoning-circle:hover::before {
+  width: 150%;
+  padding-bottom: 150%;
+  /* Aspect ratio hack for square */
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  animation: spin-slow 10s linear infinite;
+  opacity: 1;
+}
+
+.summoning-circle:hover::after {
+  width: 120%;
+  padding-bottom: 120%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: spin-reverse 8s linear infinite;
+  opacity: 1;
+}
+
+.btn-summon {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-summon:active {
+  transform: scale(0.95);
+}
+
+.btn-summon .summon-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.btn-summon:hover .summon-particles::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: pulse-ring 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Specific styling for the circle SVG if we add one inline */
+.circle-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-summon:hover .circle-svg {
+  opacity: 1;
+  animation: spin-slow 4s linear infinite;
 }
