@@ -91,7 +91,7 @@ export const createRazorpayOrder = async (orderData: OrderData): Promise<{
     // Generate a unique order ID for tracking
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 9);
-    const orderId = `PARIDHANHAAT_${timestamp}_${randomString}`;
+    const orderId = `OBITO_${timestamp}_${randomString}`;
 
     const amount = Math.round(orderData.amount * 100); // Convert to paise
 
@@ -263,5 +263,5 @@ export const formatRazorpayAmount = (amount: number): string => {
 // Generate order receipt
 export const generateOrderReceipt = (orderData: OrderData): string => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  return `PARIDHANHAAT_${timestamp}_${orderData.orderId.substring(orderData.orderId.length - 6)}`;
+  return `OBITO_${timestamp}_${orderData.orderId.substring(orderData.orderId.length - 6)}`;
 };
